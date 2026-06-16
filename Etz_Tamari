@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>עץ תמרי - קליניקה</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🪵</text></svg>">
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#7ea18b">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #f4f7f4; --header-bg: #ffffff; --card-bg: #ffffff;
+            --accent-primary: #7ea18b; --accent-hover: #638570; --accent-earth: #cc8b76;
+            --text-main: #2c3631; --text-muted: #758279; --border-light: #e3e8e4;
+            --color-therapy: #b2a4c4; --color-workshop: #9ab0d1; --color-course: #8fb899;
+            --success-color: #7b9e87; --danger-color: #d48a8a;
+            --shadow-soft: 0 4px 15px rgba(0,0,0,0.03); --radius-card: 16px; --radius-btn: 12px;
+        }
+
+        body { font-family: 'Assistant', sans-serif; background-color: var(--bg-color); color: var(--text-main); margin: 0; padding: 0; overflow-x: hidden; text-align: right; }
+        
+        header { background-color: var(--header-bg); padding: 15px; display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow-soft); border-bottom: 3px solid var(--accent-primary); }
+        header h1 { margin: 0; font-size: 22px; font-weight: 700; color: var(--accent-primary); display: flex; align-items: center; gap: 5px; }
+        
+        .backup-btn { background-color: #f8faf9; color: var(--accent-primary); border: 1px solid var(--accent-primary); padding: 6px 12px; border-radius: var(--radius-btn); cursor: pointer; font-weight: 600; font-family: 'Assistant', sans-serif; font-size: 13px; transition: all 0.3s ease; }
+        
+        .content-wrapper { padding: 15px; }
+        
+        .systems-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
+        .system-card { background: #ffffff; border: 1px solid var(--border-light); border-radius: var(--radius-card); padding: 20px 10px; text-decoration: none; color: var(--text-main); display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; aspect-ratio: 1; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
+        .system-icon { font-size: 36px; margin-bottom: 10px; }
+        .system-text { font-weight: 600; font-size: 15px; text-align: center; }
+
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(44, 54, 49, 0.9); justify-content: center; align-items: flex-end; }
+        .modal-content { background-color: var(--bg-color); color: var(--text-main); padding: 20px; border-radius: 24px 24px 0 0; width: 100%; height: 90vh; display: flex; flex-direction: column; box-sizing: border-box; }
+        
+        .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--border-light); padding-bottom: 15px; margin-bottom: 15px; }
+        .modal-header h2 { margin: 0; color: var(--accent-primary); font-size: 20px; }
+        .close-modal { font-size: 28px; cursor: pointer; color: var(--text-muted); line-height: 1; }
+        
+        .modal-body-area { flex-grow: 1; overflow-y: auto; padding-bottom: 20px; }
+        
+        .inner-card { background: #ffffff; border: 1px solid var(--border-light); border-radius: 16px; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
+        .inner-card h3 { margin-top: 0; color: var(--text-main); font-size: 17px; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 8px;}
+        
+        .form-group { margin-bottom: 12px; }
+        label { display: block; margin-bottom: 5px; font-size: 14px; font-weight: 600; }
+        input, select, textarea { width: 100%; padding: 10px; background-color: #f8faf9; border: 1px solid #d1d8d3; color: var(--text-main); border-radius: 8px; box-sizing: border-box; font-size: 15px; font-family: 'Assistant', sans-serif; }
+        .btn-primary { background-color: var(--accent-primary); color: #fff; border: none; padding: 12px; border-radius: 8px; font-weight: 600; font-family: 'Assistant', sans-serif; font-size: 16px; width: 100%; cursor: pointer; }
+        
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        
+        .btn-action-delete { background: #fff5f5; border: 1px solid #ffcdcd; color: var(--danger-color); padding: 5px 10px; border-radius: 6px; font-size: 13px; font-family: 'Assistant', sans-serif; }
+        .btn-action-edit { background: #f0f8ff; border: 1px solid #cce5ff; color: #4a90e2; padding: 5px 10px; border-radius: 6px; font-size: 13px; font-family: 'Assistant', sans-serif; }
+        
+        /* Calendar */
+        .calendar-controls { display: flex; justify-content: space-between; margin-bottom: 10px; background: #fff; padding: 10px; border-radius: 8px; }
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+        .calendar-header-cell { text-align: center; font-weight: 600; padding: 5px; background: #f0f4f1; border-radius: 4px; font-size: 13px; }
+        .calendar-day { background: #fff; border: 1px solid var(--border-light); border-radius: 6px; min-height: 70px; padding: 4px; display: flex; flex-direction: column; gap: 2px; }
+        .day-number { font-size: 12px; font-weight: 700; color: var(--text-muted); }
+        .event-bar { font-size: 11px; padding: 3px; border-radius: 4px; color: white; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        
+        /* Timeline */
+        .timeline-item { border-right: 3px solid var(--accent-primary); padding: 15px; background: #fff; margin-bottom: 15px; border-radius: 8px; border: 1px solid var(--border-light); }
+        .answer-block { background: #fafbfc; padding: 8px; border-radius: 6px; margin-bottom: 8px; font-size: 14px;}
+        .answer-block strong { color: var(--accent-primary); font-size: 13px; }
+        
+        .no-data { text-align: center; color: var(--text-muted); font-style: italic; padding: 20px; }
+        table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        th, td { padding: 8px; text-align: right; border-bottom: 1px solid #eee; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>🪵 עץ תמרי</h1>
+    <div style="display:flex; gap:8px;">
+        <button class="backup-btn" onclick="exportFullSystemBackup()">📤 גיבוי</button>
+        <button class="backup-btn" onclick="document.getElementById('importJsonInput').click()">📥 שחזור</button>
+        <input type="file" id="importJsonInput" accept=".json" style="display:none" onchange="importFullSystemBackup(event)">
+    </div>
+</header>
+
+<div class="content-wrapper">
+    <div class="systems-grid">
+        <div class="system-card" onclick="openModal('calendarModal')"><div class="system-icon">📅</div><div class="system-text">יומן מפגשים</div></div>
+        <div class="system-card" onclick="openModal('patientsModal')"><div class="system-icon">📂</div><div class="system-text">תיקי מטופלים</div></div>
+        <div class="system-card" onclick="openModal('financeModal')"><div class="system-icon">📊</div><div class="system-text">ניהול פיננסי</div></div>
+        <div class="system-card" onclick="openModal('inventoryModal')"><div class="system-icon">🛠️</div><div class="system-text">מלאי וציוד</div></div>
+        <div class="system-card" onclick="openModal('workshopsModal')"><div class="system-icon">📋</div><div class="system-text">סדנאות וחוגים</div></div>
+        <div class="system-card" onclick="openModal('shopModal')"><div class="system-icon">🛍️</div><div class="system-text">חנות ציוד</div></div>
+    </div>
+</div>
+
+<div id="calendarModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>📅 יומן מרחב העבודה</h2>
+            <span class="close-modal" onclick="closeModal('calendarModal')">&times;</span>
+        </div>
+        <div class="modal-body-area">
+            <div class="inner-card">
+                <h3>רישום מפגש או סדנה</h3>
+                <form id="event-form" onsubmit="addEvent(event)">
+                    <div class="form-group"><input type="text" id="event-title" required placeholder="שם הפעילות / מטופל"></div>
+                    <div class="form-group"><input type="date" id="event-date" required></div>
+                    <div class="grid-2">
+                        <div class="form-group"><input type="time" id="event-start"></div>
+                        <div class="form-group"><input type="time" id="event-end"></div>
+                    </div>
+                    <div class="form-group">
+                        <select id="event-color" required>
+                            <option value="var(--color-therapy)">טיפול פרטני (סגול)</option>
+                            <option value="var(--color-workshop)">סדנה (תכלת)</option>
+                            <option value="var(--color-course)">חוג מתמשך (ירוק)</option>
+                            <option value="var(--accent-earth)">אחר (אדמה)</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn-primary">הוסף ליומן</button>
+                </form>
+            </div>
+            
+            <div class="calendar-controls">
+                <div style="display:flex; gap:5px;">
+                    <button id="btn-view-month" class="btn-primary" style="padding:5px 10px; font-size:13px; width:auto;" onclick="toggleCalView('month')">חודש</button>
+                    <button id="btn-view-week" class="btn-primary" style="padding:5px 10px; font-size:13px; width:auto; background:#eee; color:#333;" onclick="toggleCalView('week')">שבוע</button>
+                </div>
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <button class="btn-action-edit" onclick="navigateCal(-1)">◀</button>
+                    <span id="cal-month-year" style="font-weight:bold; font-size:14px; min-width:100px; text-align:center;"></span>
+                    <button class="btn-action-edit" onclick="navigateCal(1)">▶</button>
+                </div>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-bottom: 4px;">
+                <div class="calendar-header-cell">א'</div><div class="calendar-header-cell">ב'</div><div class="calendar-header-cell">ג'</div><div class="calendar-header-cell">ד'</div><div class="calendar-header-cell">ה'</div><div class="calendar-header-cell">ו'</div><div class="calendar-header-cell">ש'</div>
+            </div>
+            <div class="calendar-grid" id="calendar-grid-container"></div>
+        </div>
+    </div>
+</div>
+
+<div id="patientsModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>📂 תיקי מטופלים</h2>
+            <span class="close-modal" onclick="closeModal('patientsModal')">&times;</span>
+        </div>
+        <div class="modal-body-area">
+            <div class="inner-card">
+                <h3 id="patient-form-title">תיעוד מפגש חדש</h3>
+                <form id="patient-form" onsubmit="savePatientCard(event)">
+                    <div class="form-group">
+                        <input type="text" id="patient-name" list="existing-patients" required placeholder="שם המטופל/ת..." oninput="checkExistingPatient(this.value)">
+                        <datalist id="existing-patients"></datalist>
+                    </div>
+                    <div class="form-group"><textarea id="patient-general-desc" rows="2" placeholder="רקע ומטרות..."></textarea></div>
+                    <div class="form-group"><input type="date" id="record-date"></div>
+                    <div class="grid-2">
+                        <div class="form-group"><input type="text" id="record-stage" placeholder="שלב עבודה (שיוף...)"></div>
+                        <div class="form-group"><input type="text" id="record-projects" placeholder="פרויקט (קופסה...)"></div>
+                    </div>
+                    <h4 style="margin: 10px 0; font-size:15px; color:var(--accent-earth);">הערות קליניות (רשות)</h4>
+                    <div class="form-group"><textarea id="q-motor" rows="2" placeholder="פיזי ומוטורי..."></textarea></div>
+                    <div class="form-group"><textarea id="q-cognitive" rows="2" placeholder="תפקודים ניהוליים..."></textarea></div>
+                    <div class="form-group"><textarea id="q-emotional" rows="2" placeholder="רגשי וויסות..."></textarea></div>
+                    <div class="form-group"><textarea id="q-social" rows="2" placeholder="בינאישי ותקשורת..."></textarea></div>
+                    <div class="form-group"><textarea id="q-value" rows="2" placeholder="תוצר וערך..."></textarea></div>
+                    <button type="submit" id="patient-submit-btn" class="btn-primary">שמור תצפית</button>
+                </form>
+            </div>
+            
+            <div class="inner-card">
+                <h3>ציר זמן</h3>
+                <div class="form-group"><select id="view-patient-select" onchange="displayPatientFile(this.value)"><option value="">-- בחר/י מטופל --</option></select></div>
+                <div id="patient-file-output"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="financeModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>📊 ניהול פיננסי</h2>
+            <span class="close-modal" onclick="closeModal('financeModal')">&times;</span>
+        </div>
+        <div class="modal-body-area">
+            <div style="background:#fff; padding:10px; border-radius:8px; border:1px solid var(--border-light); margin-bottom:15px; display:flex; justify-content:space-between; align-items:center;">
+                <span style="font-weight:600;">חודש:</span>
+                <input type="month" id="finance-month-filter" onchange="renderFinance()" style="width:auto; padding:5px;">
+            </div>
+            <div style="display:flex; gap:10px; margin-bottom:15px;">
+                <div style="flex:1; background:#fff; padding:10px; border-radius:8px; border-top:3px solid var(--success-color); text-align:center;">
+                    <div style="font-size:12px; color:#666;">הכנסות</div><div id="fin-total-income" style="font-weight:bold; color:var(--success-color);">0</div>
+                </div>
+                <div style="flex:1; background:#fff; padding:10px; border-radius:8px; border-top:3px solid var(--danger-color); text-align:center;">
+                    <div style="font-size:12px; color:#666;">הוצאות</div><div id="fin-total-expense" style="font-weight:bold; color:var(--danger-color);">0</div>
+                </div>
+                <div style="flex:1; background:#fff; padding:10px; border-radius:8px; border-top:3px solid var(--accent-primary); text-align:center;">
+                    <div style="font-size:12px; color:#666;">מאזן</div><div id="fin-balance" style="font-weight:bold; color:var(--accent-primary);">0</div>
+                </div>
+            </div>
+            <div class="inner-card">
+                <h3>תנועה חדשה</h3>
+                <form id="finance-form" onsubmit="addFinanceRecord(event)">
+                    <div class="grid-2">
+                        <select id="fin-type" required><option value="income">הכנסה</option><option value="expense">הוצאה</option></select>
+                        <input type="date" id="fin-date" required>
+                    </div>
+                    <div class="grid-2">
+                        <input type="number" id="fin-amount" required min="0" step="0.01" placeholder="סכום (₪)">
+                        <input type="text" id="fin-desc" required placeholder="תיאור...">
+                    </div>
+                    <button type="submit" class="btn-primary">שמור תנועה</button>
+                </form>
+            </div>
+            <div class="inner-card" style="overflow-x:auto;">
+                <table style="min-width:300px;"><tbody id="finance-table-body"></tbody></table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="inventoryModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header"><h2>🛠️ מלאי וציוד</h2><span class="close-modal" onclick="closeModal('inventoryModal')">&times;</span></div>
+        <div class="modal-body-area">
+            <div class="inner-card">
+                <form id="inventory-form" onsubmit="addInventory(event)">
+                    <input type="text" id="inv-name" required placeholder="שם הפריט">
+                    <div class="grid-2">
+                        <select id="inv-category"><option value="כלי עבודה">כלי עבודה</option><option value="חומרי גלם">חומרי גלם</option></select>
+                        <input type="number" id="inv-qty" required min="0" value="1" placeholder="כמות">
+                    </div>
+                    <button type="submit" class="btn-primary">הוסף</button>
+                </form>
+            </div>
+            <div class="inner-card" style="overflow-x:auto;"><table><tbody id="inventory-table-body"></tbody></table></div>
+        </div>
+    </div>
+</div>
+
+<div id="workshopsModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header"><h2>📋 תוכניות ומערכים</h2><span class="close-modal" onclick="closeModal('workshopsModal')">&times;</span></div>
+        <div class="modal-body-area">
+            <div style="display:flex; gap:5px; margin-bottom:15px;">
+                <button class="btn-primary" style="padding:8px; font-size:14px;" onclick="switchProgType('workshop')">סדנאות</button>
+                <button class="btn-primary" style="padding:8px; font-size:14px; background:#e3e8e4; color:#333;" onclick="switchProgType('class')">חוגים</button>
+                <button class="btn-primary" style="padding:8px; font-size:14px; background:#e3e8e4; color:#333;" onclick="switchProgType('plan')">פרוטוקולים</button>
+            </div>
+            <div class="inner-card">
+                <h3 id="prog-form-title">יצירת תוכנית חדשה</h3>
+                <form id="prog-form" onsubmit="saveProgram(event)">
+                    <input type="text" id="prog-title" required placeholder="שם / כותרת">
+                    <div class="grid-2">
+                        <input type="text" id="prog-meta" placeholder="הגדרות (זמן/יעד)">
+                        <input type="number" id="prog-price" placeholder="עלות (₪)">
+                    </div>
+                    <textarea id="prog-content" rows="3" placeholder="תוכן ומהלך עבודה..."></textarea>
+                    <div style="display:flex; gap:10px;">
+                        <button type="submit" id="prog-btn" class="btn-primary">שמור</button>
+                        <button type="button" class="btn-action-delete" style="display:none; width:100%;" id="prog-cancel-btn" onclick="cancelEditProg()">ביטול</button>
+                    </div>
+                </form>
+            </div>
+            <div id="prog-list-container" style="display:flex; flex-direction:column; gap:10px;"></div>
+        </div>
+    </div>
+</div>
+
+<div id="shopModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header"><h2>🛍️ חנות ציוד נגרות</h2><span class="close-modal" onclick="closeModal('shopModal')">&times;</span></div>
+        <div class="modal-body-area">
+            <div class="inner-card">
+                <form id="shop-form" onsubmit="addShopItem(event)">
+                    <input type="text" id="shop-name" required placeholder="שם הפריט">
+                    <div class="grid-2">
+                        <input type="number" id="shop-price" required placeholder="מחיר (₪)">
+                        <input type="text" id="shop-desc" placeholder="תיאור קצר">
+                    </div>
+                    <button type="submit" class="btn-primary">הוסף</button>
+                </form>
+            </div>
+            <input type="text" id="shop-search" placeholder="🔍 חיפוש ציוד..." onkeyup="renderShop()" style="margin-bottom:10px;">
+            <div id="shop-list" style="display:flex; flex-direction:column; gap:10px;"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Data stores
+    let events = JSON.parse(localStorage.getItem('carp_events')) || [];
+    let patientFiles = JSON.parse(localStorage.getItem('carp_patients')) || {};
+    let inventory = JSON.parse(localStorage.getItem('carp_inventory')) || [];
+    let programs = JSON.parse(localStorage.getItem('carp_programs')) || { workshop: [], class: [], plan: [] };
+    let shopItems = JSON.parse(localStorage.getItem('carp_shop')) || [];
+    let finances = JSON.parse(localStorage.getItem('carp_finance')) || [];
+
+    const SECURITY_CODE = "5194";
+
+    // Defaults
+    document.getElementById('event-date').valueAsDate = new Date();
+    document.getElementById('record-date').valueAsDate = new Date();
+    document.getElementById('fin-date').valueAsDate = new Date();
+    const today = new Date();
+    document.getElementById('finance-month-filter').value = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`;
+
+    function openModal(id) {
+        document.getElementById(id).style.display = 'flex';
+        setTimeout(() => {
+            if (id === 'calendarModal') renderCalendar();
+            if (id === 'patientsModal') initPatientsTab();
+            if (id === 'inventoryModal') renderInventory();
+            if (id === 'financeModal') renderFinance();
+            if (id === 'workshopsModal') switchProgType('workshop');
+            if (id === 'shopModal') renderShop();
+        }, 50);
+    }
+    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+    // Backup & Restore
+    function exportFullSystemBackup() {
+        const codeInput = prompt("נא להזין קוד אימות:");
+        if (codeInput !== SECURITY_CODE) return alert("שגוי.");
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({ events, patientFiles, inventory, programs, shopItems, finances }));
+        const a = document.createElement('a'); a.href = dataStr; a.download = `etz_tamari_backup.json`; a.click();
+    }
+    function importFullSystemBackup(event) {
+        const file = event.target.files[0]; if (!file) return;
+        if (prompt("קוד אימות (הנתונים יידרסו):") !== SECURITY_CODE) return alert("שגוי.");
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const data = JSON.parse(e.target.result);
+                events = data.events || []; patientFiles = data.patientFiles || {}; inventory = data.inventory || [];
+                programs = data.programs || { workshop: [], class: [], plan: [] }; shopItems = data.shopItems || []; finances = data.finances || [];
+                localStorage.setItem('carp_events', JSON.stringify(events)); localStorage.setItem('carp_patients', JSON.stringify(patientFiles));
+                localStorage.setItem('carp_inventory', JSON.stringify(inventory)); localStorage.setItem('carp_programs', JSON.stringify(programs));
+                localStorage.setItem('carp_shop', JSON.stringify(shopItems)); localStorage.setItem('carp_finance', JSON.stringify(finances));
+                alert("שוחזר בהצלחה!"); location.reload();
+            } catch (err) { alert("שגיאה בקובץ."); }
+        }; reader.readAsText(file);
+    }
+
+    // Calendar
+    let currentNavDate = new Date(); currentNavDate.setHours(0,0,0,0);
+    let calViewMode = 'month'; const hebrewMonths = ["ינואר", "פברואר", "מרץ", "אפריל", "מאי", "יוני", "יולי", "אוגוסט", "ספטמבר", "אוקטובר", "נובמבר", "דצמבר"];
+    
+    function toggleCalView(mode) {
+        calViewMode = mode;
+        document.getElementById('btn-view-month').style.background = mode === 'month' ? 'var(--accent-primary)' : '#eee';
+        document.getElementById('btn-view-week').style.background = mode === 'week' ? 'var(--accent-primary)' : '#eee';
+        renderCalendar();
+    }
+    function navigateCal(dir) {
+        if (calViewMode === 'month') currentNavDate.setMonth(currentNavDate.getMonth() + dir);
+        else currentNavDate.setDate(currentNavDate.getDate() + (dir * 7));
+        renderCalendar();
+    }
+    function renderCalendar() {
+        const container = document.getElementById('calendar-grid-container'); container.innerHTML = '';
+        const year = currentNavDate.getFullYear(); const month = currentNavDate.getMonth();
+        let startDate, daysToRender;
+        if (calViewMode === 'month') {
+            document.getElementById('cal-month-year').innerText = `${hebrewMonths[month]} ${year}`;
+            startDate = new Date(year, month, 1 - new Date(year, month, 1).getDay()); 
+            daysToRender = 35;
+        } else {
+            startDate = new Date(year, month, currentNavDate.getDate() - currentNavDate.getDay());
+            const endDate = new Date(startDate); endDate.setDate(startDate.getDate() + 6);
+            document.getElementById('cal-month-year').innerText = `${startDate.getDate()}/${startDate.getMonth()+1} - ${endDate.getDate()}/${endDate.getMonth()+1}`;
+            daysToRender = 7;
+        }
+        let iter = new Date(startDate);
+        for (let i = 0; i < daysToRender; i++) {
+            const dateStr = `${iter.getFullYear()}-${String(iter.getMonth()+1).padStart(2,'0')}-${String(iter.getDate()).padStart(2,'0')}`;
+            const cell = document.createElement('div'); cell.className = 'calendar-day';
+            if (calViewMode === 'week') cell.style.minHeight = '150px';
+            const isToday = dateStr === `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+            if(isToday) { cell.style.border = '2px solid var(--accent-primary)'; cell.style.backgroundColor = '#f2f7f4'; }
+            cell.innerHTML = `<div class="day-number">${iter.getDate()}/${iter.getMonth()+1}</div>`;
+            events.filter(e => e.date === dateStr).forEach(e => {
+                const div = document.createElement('div'); div.className = 'event-bar'; div.style.backgroundColor = e.color;
+                div.innerText = `${e.startTime||''} ${e.title}`;
+                div.onclick = () => { if(confirm(`למחוק את ${e.title}?`)){ events = events.filter(ev=>ev.id!==e.id); localStorage.setItem('carp_events', JSON.stringify(events)); renderCalendar();} };
+                cell.appendChild(div);
+            });
+            container.appendChild(cell); iter.setDate(iter.getDate() + 1);
+        }
+    }
+    function addEvent(e) {
+        e.preventDefault();
+        events.push({ id: Date.now().toString(), title: document.getElementById('event-title').value, date: document.getElementById('event-date').value, startTime: document.getElementById('event-start').value, endTime: document.getElementById('event-end').value, color: document.getElementById('event-color').value, desc: document.getElementById('event-desc').value });
+        localStorage.setItem('carp_events', JSON.stringify(events)); document.getElementById('event-form').reset(); document.getElementById('event-date').valueAsDate = new Date(); renderCalendar();
+    }
+
+    // Patients
+    let editingPatientName = null, editingRecordId = null;
+    function initPatientsTab() { updatePatientLists(); displayPatientFile(document.getElementById('view-patient-select').value); }
+    function updatePatientLists() {
+        const datalist = document.getElementById('existing-patients'), select = document.getElementById('view-patient-select'), current = select.value;
+        datalist.innerHTML = ''; select.innerHTML = '<option value="">-- בחר/י --</option>';
+        Object.keys(patientFiles).forEach(name => { datalist.innerHTML += `<option value="${name}">`; select.innerHTML += `<option value="${name}">${name}</option>`; });
+        select.value = current;
+    }
+    function checkExistingPatient(name) { if (!editingRecordId && patientFiles[name]) document.getElementById('patient-general-desc').value = patientFiles[name].generalDesc || ''; }
+    
+    function savePatientCard(e) {
+        e.preventDefault();
+        const name = document.getElementById('patient-name').value.trim();
+        const rec = { id: editingRecordId || Date.now().toString(), date: document.getElementById('record-date').value, stage: document.getElementById('record-stage').value, projects: document.getElementById('record-projects').value, answers: { motor: document.getElementById('q-motor').value, cognitive: document.getElementById('q-cognitive').value, emotional: document.getElementById('q-emotional').value, social: document.getElementById('q-social').value, value: document.getElementById('q-value').value } };
+        if (!patientFiles[name]) patientFiles[name] = { generalDesc: document.getElementById('patient-general-desc').value, records: [] }; else patientFiles[name].generalDesc = document.getElementById('patient-general-desc').value;
+        
+        if (editingRecordId && editingPatientName === name) patientFiles[name].records[patientFiles[name].records.findIndex(r => r.id === editingRecordId)] = rec;
+        else patientFiles[name].records.push(rec);
+        
+        localStorage.setItem('carp_patients', JSON.stringify(patientFiles)); editingRecordId = null; editingPatientName = null;
+        document.getElementById('patient-submit-btn').innerText = "שמור תצפית"; document.getElementById('patient-form').reset(); document.getElementById('record-date').valueAsDate = new Date();
+        updatePatientLists(); document.getElementById('view-patient-select').value = name; displayPatientFile(name); alert('נשמר בהצלחה.');
+    }
+
+    function displayPatientFile(name) {
+        const output = document.getElementById('patient-file-output');
+        if (!name || !patientFiles[name]) return output.innerHTML = '<p class="no-data">בחר/י מטופל</p>';
+        const p = patientFiles[name];
+        let html = `<div style="background:#f9fcf9; padding:10px; border-radius:8px; margin-bottom:15px; border-right:3px solid var(--accent-primary);"><strong>רקע:</strong><p style="margin:5px 0 0 0; font-size:14px;">${p.generalDesc}</p><button class="btn-action-delete" style="margin-top:10px; width:100%;" onclick="deleteEntirePatient('${name}')">מחק תיק מטופל</button></div>`;
+        [...p.records].sort((a,b)=>new Date(b.date)-new Date(a.date)).forEach(r => {
+            html += `<div class="timeline-item"><div style="display:flex; justify-content:space-between; margin-bottom:10px;"><strong>${r.date.split('-').reverse().join('/')}</strong><div><button class="btn-action-edit" onclick="editRecord('${name}','${r.id}')">ערוך</button><button class="btn-action-delete" onclick="deleteRecord('${name}','${r.id}')">מחק</button></div></div><div style="font-size:13px; color:#666; margin-bottom:10px;">שלב: ${r.stage} | פרויקט: ${r.projects}</div>`;
+            ['motor','cognitive','emotional','social','value'].forEach(q => { if(r.answers[q]) html += `<div class="answer-block"><strong>${q}:</strong><p>${r.answers[q]}</p></div>`; });
+            html += `</div>`;
+        });
+        output.innerHTML = html;
+    }
+    function deleteEntirePatient(name) { if(confirm(`למחוק את ${name}?`)) { delete patientFiles[name]; localStorage.setItem('carp_patients', JSON.stringify(patientFiles)); updatePatientLists(); displayPatientFile(''); } }
+    function deleteRecord(name, id) { if(confirm('למחוק תצפית?')) { patientFiles[name].records = patientFiles[name].records.filter(r=>r.id!==id); localStorage.setItem('carp_patients', JSON.stringify(patientFiles)); displayPatientFile(name); } }
+    function editRecord(name, id) {
+        const r = patientFiles[name].records.find(x=>x.id===id); if(!r) return;
+        editingPatientName = name; editingRecordId = id;
+        document.getElementById('patient-name').value = name; document.getElementById('patient-general-desc').value = patientFiles[name].generalDesc;
+        document.getElementById('record-date').value = r.date; document.getElementById('record-stage').value = r.stage; document.getElementById('record-projects').value = r.projects;
+        ['motor','cognitive','emotional','social','value'].forEach(q => document.getElementById(`q-${q}`).value = r.answers[q] || '');
+        document.getElementById('patient-submit-btn').innerText = "עדכן תצפית"; document.getElementById('patient-name').scrollIntoView();
+    }
+
+    // Finance
+    function addFinanceRecord(e) {
+        e.preventDefault();
+        finances.push({ id: Date.now().toString(), type: document.getElementById('fin-type').value, date: document.getElementById('fin-date').value, amount: parseFloat(document.getElementById('fin-amount').value), desc: document.getElementById('fin-desc').value });
+        localStorage.setItem('carp_finance', JSON.stringify(finances)); document.getElementById('fin-amount').value = ''; document.getElementById('fin-desc').value = ''; document.getElementById('finance-month-filter').value = document.getElementById('fin-date').value.substring(0,7); renderFinance();
+    }
+    function renderFinance() {
+        const m = document.getElementById('finance-month-filter').value, tbody = document.getElementById('finance-table-body'); tbody.innerHTML = '';
+        let inc = 0, exp = 0;
+        finances.filter(f=>f.date.startsWith(m)).sort((a,b)=>new Date(b.date)-new Date(a.date)).forEach(f => {
+            if(f.type==='income') inc+=f.amount; else exp+=f.amount;
+            tbody.innerHTML += `<tr><td>${f.date.split('-').reverse().join('/')}</td><td>${f.desc}</td><td style="color:${f.type==='income'?'var(--success-color)':'var(--danger-color)'}">${f.amount}</td><td><button class="btn-action-delete" onclick="if(confirm('למחוק?')){ finances=finances.filter(x=>x.id!=='${f.id}'); localStorage.setItem('carp_finance', JSON.stringify(finances)); renderFinance();}">מחק</button></td></tr>`;
+        });
+        document.getElementById('fin-total-income').innerText = inc.toFixed(0); document.getElementById('fin-total-expense').innerText = exp.toFixed(0); document.getElementById('fin-balance').innerText = (inc-exp).toFixed(0);
+    }
+
+    // Inventory
+    function renderInventory() { document.getElementById('inventory-table-body').innerHTML = inventory.map((i,idx)=>`<tr><td>${i.name}</td><td>${i.category}</td><td>${i.qty}</td><td><button class="btn-action-delete" onclick="inventory.splice(${idx},1); localStorage.setItem('carp_inventory', JSON.stringify(inventory)); renderInventory();">מחק</button></td></tr>`).join(''); }
+    function addInventory(e) { e.preventDefault(); inventory.push({name:document.getElementById('inv-name').value, category:document.getElementById('inv-category').value, qty:document.getElementById('inv-qty').value}); localStorage.setItem('carp_inventory', JSON.stringify(inventory)); document.getElementById('inventory-form').reset(); renderInventory(); }
+
+    // Shop
+    function addShopItem(e) { e.preventDefault(); shopItems.push({ id: Date.now().toString(), name: document.getElementById('shop-name').value, price: document.getElementById('shop-price').value, desc: document.getElementById('shop-desc').value }); localStorage.setItem('carp_shop', JSON.stringify(shopItems)); document.getElementById('shop-form').reset(); renderShop(); }
+    function renderShop() { const q = document.getElementById('shop-search').value.toLowerCase(); document.getElementById('shop-list').innerHTML = shopItems.filter(i=>i.name.toLowerCase().includes(q)).map(i=>`<div class="inner-card" style="margin-bottom:10px;"><strong>${i.name}</strong> - ₪${i.price}<p style="margin:5px 0; font-size:14px;">${i.desc}</p><button class="btn-action-delete" onclick="shopItems=shopItems.filter(x=>x.id!=='${i.id}'); localStorage.setItem('carp_shop', JSON.stringify(shopItems)); renderShop();">מחק ממוצרים</button></div>`).join(''); }
+
+    // Programs (Unified UI for Mobile)
+    let currentProgType = 'workshop';
+    function switchProgType(type) {
+        currentProgType = type;
+        const titles = { workshop: 'סדנה', class: 'חוג', plan: 'פרוטוקול' };
+        document.getElementById('prog-form-title').innerText = `יצירת ${titles[type]} חדש`;
+        document.getElementById('prog-list-container').innerHTML = programs[type].map(p=>`<div class="inner-card" style="margin-bottom:10px;"><div style="display:flex; justify-content:space-between;"><strong>${p.title}</strong><span style="color:var(--accent-primary); font-weight:bold;">₪${p.price||0}</span></div><p style="font-size:13px; color:#666; margin:5px 0;">${p.meta}</p><p style="font-size:14px; margin:5px 0;">${p.content}</p><div style="display:flex; gap:5px;"><button class="btn-action-edit" onclick="editProg('${type}','${p.id}')">ערוך</button><button class="btn-action-delete" onclick="programs['${type}']=programs['${type}'].filter(x=>x.id!=='${p.id}'); localStorage.setItem('carp_programs', JSON.stringify(programs)); switchProgType('${type}');">מחק</button></div></div>`).join('');
+    }
+    function saveProgram(e) {
+        e.preventDefault(); const p = { id: editProgState.id || Date.now().toString(), title: document.getElementById('prog-title').value, meta: document.getElementById('prog-meta').value, content: document.getElementById('prog-content').value, price: document.getElementById('prog-price').value };
+        if(editProgState.id) programs[currentProgType][programs[currentProgType].findIndex(x=>x.id===editProgState.id)] = p; else programs[currentProgType].push(p);
+        localStorage.setItem('carp_programs', JSON.stringify(programs)); cancelEditProg(); switchProgType(currentProgType);
+    }
+    function editProg(type, id) { const p = programs[type].find(x=>x.id===id); editProgState={type, id}; document.getElementById('prog-title').value=p.title; document.getElementById('prog-meta').value=p.meta; document.getElementById('prog-price').value=p.price; document.getElementById('prog-content').value=p.content; document.getElementById('prog-btn').innerText="עדכן"; document.getElementById('prog-cancel-btn').style.display="block"; }
+    function cancelEditProg() { editProgState={type:null, id:null}; document.getElementById('prog-form').reset(); document.getElementById('prog-btn').innerText="שמור"; document.getElementById('prog-cancel-btn').style.display="none"; }
+
+    // Service Worker for PWA (Optional - requires sw.js file on server)
+    if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(()=>{}); }); }
+</script>
+</body>
+</html>
