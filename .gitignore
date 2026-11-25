@@ -1,0 +1,21 @@
+# מפתח החתימה — לעולם לא נכנס לריפו. הוא חי כסוד בהגדרות GitHub.
+*.keystore
+*.jks
+
+# תוצרי בנייה של Bubblewrap
+/app/
+/gradle/
+gradlew
+gradlew.bat
+build.gradle
+settings.gradle
+gradle.properties
+local.properties
+*.apk
+*.aab
+assetlinks.json
+store_icon.png
+
+# מקומי
+.DS_Store
+node_modules/

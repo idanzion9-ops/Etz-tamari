@@ -1,18 +1,24 @@
 {
+  "id": "/Etz-tamari/",
   "name": "עץ תמרי — נגרות, יצירה וקהילה",
   "short_name": "עץ תמרי",
-  "description": "נגריה קהילתית: סדנאות, חוגים, מרחב עבודה בעץ וחנות כלים.",
+  "description": "נגרייה קהילתית: סדנאות, חוגים, מרחב עבודה שקט ורעיונות לפרויקטים קטנים משאריות עץ.",
   "lang": "he",
   "dir": "rtl",
-  "start_url": "./index.html",
-  "scope": "./",
+  "start_url": "/Etz-tamari/",
+  "scope": "/Etz-tamari/",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#F1EDE2",
   "theme_color": "#F1EDE2",
+  "categories": ["lifestyle", "education"],
   "icons": [
     { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
     { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
     { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "פרויקטונים", "url": "/Etz-tamari/#projects", "description": "רעיונות משאריות עץ" },
+    { "name": "סדנאות וחוגים", "url": "/Etz-tamari/#activities", "description": "לוח הפעילויות" }
   ]
 }

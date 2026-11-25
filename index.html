@@ -191,11 +191,65 @@
 <script src="assets/js/app.js"></script>
 <script src="assets/js/admin.js"></script>
 <script>
-  window.addEventListener('load', () => {
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js').catch(e => console.info('SW לא נרשם:', e));
-    }
+/* ==========================================================================
+   עדכון חי.
+   האפליקציה ארוזה כ-APK שטוען את האתר מהרשת, ולכן כל פרסום חדש
+   מגיע למשתמשים בלי להתקין שום דבר מחדש.
+   ========================================================================== */
+(function () {
+  if (!('serviceWorker' in navigator)) return;
+
+  var reloading = false;
+  var lastCheck = 0;
+
+  // כשה-Service Worker החדש משתלט — טוענים מחדש פעם אחת
+  navigator.serviceWorker.addEventListener('controllerchange', function () {
+    if (reloading) return;
+    reloading = true;
+    applyUpdate();
   });
+
+  function applyUpdate() {
+    var sheetOpen = document.getElementById('sheet')
+      && document.getElementById('sheet').classList.contains('on');
+
+    // באמצע עבודה על משהו? לא חוטפים את המסך — מציעים.
+    if (sheetOpen) {
+      reloading = false;
+      showBanner();
+      return;
+    }
+    location.reload();
+  }
+
+  function showBanner() {
+    if (document.getElementById('update-banner')) return;
+    var b = document.createElement('button');
+    b.id = 'update-banner';
+    b.className = 'toast on';
+    b.style.cssText = 'border:0;text-align:center;cursor:pointer;';
+    b.textContent = 'גרסה חדשה מוכנה — הקישו לרענון';
+    b.onclick = function () { location.reload(); };
+    document.body.appendChild(b);
+  }
+
+  navigator.serviceWorker.register('sw.js').then(function (reg) {
+    // בדיקת עדכון בכל פתיחה, וגם כשחוזרים לאפליקציה אחרי שהיא הייתה ברקע
+    function check() {
+      var now = Date.now();
+      if (now - lastCheck < 60000) return;   // לא יותר מפעם בדקה
+      lastCheck = now;
+      reg.update().catch(function () {});
+    }
+    check();
+    document.addEventListener('visibilitychange', function () {
+      if (document.visibilityState === 'visible') check();
+    });
+    window.addEventListener('online', check);
+  }).catch(function (e) {
+    console.info('SW לא נרשם:', e);
+  });
+})();
 </script>
 </body>
 </html>
