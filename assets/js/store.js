@@ -48,6 +48,7 @@ const Store = (() => {
     },
     workshops: [],
     classes: [],
+    projects: [],
     products: [],
     events: [],
     participants: [],
@@ -58,7 +59,7 @@ const Store = (() => {
     orders: []
   });
 
-  const emptyLocal = () => ({ cart: [], favs: [], myRequests: [], myOrders: [], me: { name: '', phone: '', email: '' } });
+  const emptyLocal = () => ({ cart: [], favs: [], myRequests: [], myOrders: [], progress: {}, me: { name: '', phone: '', email: '' } });
 
   /* ---------- שמירה וטעינה ---------- */
 
@@ -190,6 +191,24 @@ const Store = (() => {
     return rec;
   }
 
+  /* ---------- התקדמות בפרויקטון (מקומית לכל מכשיר) ---------- */
+
+  const progressOf = id => (local.progress && local.progress[id]) || [];
+
+  function toggleStep(projectId, stepIndex) {
+    if (!local.progress) local.progress = {};
+    const done = new Set(local.progress[projectId] || []);
+    done.has(stepIndex) ? done.delete(stepIndex) : done.add(stepIndex);
+    local.progress[projectId] = Array.from(done).sort((a, b) => a - b);
+    saveLocal();
+    return local.progress[projectId];
+  }
+
+  function resetProgress(projectId) {
+    if (local.progress) delete local.progress[projectId];
+    saveLocal();
+  }
+
   /* ---------- ייצוא / ייבוא / פרסום ---------- */
 
   function download(filename, text) {
@@ -209,6 +228,7 @@ const Store = (() => {
       site: { ...content.site },
       workshops: content.workshops,
       classes: content.classes,
+      projects: content.projects,
       products: content.products,
       events: content.events.map(e => ({ id: e.id, title: e.title, date: e.date, start: e.start, end: e.end, type: e.type, capacity: e.capacity, taken: e.taken }))
     };
@@ -245,6 +265,7 @@ const Store = (() => {
     list, upsert, remove, find, saveContent, saveLocal,
     cartAdd, cartSet, cartCount, cartTotal, cartClear,
     favToggle, isFav, addRequest, addOrder,
+    progressOf, toggleStep, resetProgress,
     publishFile, backupFile, restore, resetDraft,
     adminOpen, setAdminOpen
   };

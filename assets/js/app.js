@@ -6,6 +6,8 @@ const App = (() => {
   const { $, $$, esc, safeHtml, money, dateHe, dowHe, todayISO, toast, sheet, sheetFoot, closeSheet, go } = UI;
 
   let actTab = 'workshops';
+  let pjFilter = 'all';
+  let openPj = null;
 
   /* ======================================================================
      כותרת ומיתוג
@@ -303,6 +305,116 @@ const App = (() => {
   }
 
   /* ======================================================================
+     פרויקטונים
+     ====================================================================== */
+
+  function pjStats(p) {
+    const total = (p.steps || []).length;
+    const done = Store.progressOf(p.id).filter(i => i < total).length;
+    return { total, done, pct: total ? Math.round(done / total * 100) : 0 };
+  }
+
+  function pjCard(p) {
+    const { total, done, pct } = pjStats(p);
+    return `<button class="pj-card" data-pj="${esc(p.id)}">
+      ${done === total && total ? '<span class="done-mark">✓</span>' : ''}
+      <span class="em">${esc(p.emoji || '🪚')}</span>
+      <h3>${esc(p.title)}</h3>
+      <div class="tags">
+        <span class="tag-s lv">${esc(p.level)}</span>
+        <span class="tag-s">${esc(p.time)}</span>
+      </div>
+      ${done ? `<div class="mini-bar"><i style="width:${pct}%"></i></div>` : ''}
+    </button>`;
+  }
+
+  function renderProjects() {
+    const all = Store.list('projects');
+    $('#projects-intro').textContent = Store.site().projectsIntro || '';
+
+    $$('#projects-filter [data-lvl]').forEach(b =>
+      b.setAttribute('aria-selected', String(b.dataset.lvl === pjFilter)));
+
+    // "קל" אוסף גם את "קל מאוד" ואת "קל-בינוני"; "בינוני" הוא התאמה מדויקת
+    const arr = pjFilter === 'all' ? all
+      : pjFilter === 'קל' ? all.filter(p => (p.level || '').startsWith('קל'))
+      : all.filter(p => (p.level || '') === pjFilter);
+    $('#projects-grid').innerHTML = arr.length ? arr.map(pjCard).join('')
+      : `<div class="empty" style="grid-column:1/-1"><div class="em">♻️</div><p>אין כרגע פרויקטונים ברמה הזו.</p></div>`;
+
+    // שלושה ראשונים בדף הבית
+    const home = $('#home-projects');
+    if (home) home.innerHTML = all.length
+      ? `<div class="pj-grid">${all.slice(0, 3).map(pjCard).join('')}</div>`
+      : `<div class="empty"><div class="em">♻️</div><p>הרעיונות בדרך.</p></div>`;
+  }
+
+  function projectBody(p) {
+    const done = new Set(Store.progressOf(p.id));
+    const total = (p.steps || []).length;
+    const n = [...done].filter(i => i < total).length;
+    const pct = total ? Math.round(n / total * 100) : 0;
+
+    return `<div class="pj-progress">
+        <div class="line"><span class="lbl" style="margin:0">התקדמות</span><b id="pj-count">${n} מתוך ${total}</b></div>
+        <div class="bar"><i id="pj-bar" class="${n === total && total ? 'full' : ''}" style="width:${pct}%"></i></div>
+      </div>
+      <p class="lead" style="margin-top:0">${esc(p.summary || '')}</p>
+      <div class="btn-row" style="margin-bottom:6px">
+        <span class="chip">${esc(p.level)}</span>
+        <span class="chip chip--flat">${esc(p.time)}</span>
+      </div>
+
+      <div class="eyebrow" style="margin-top:24px">חומרים ושאריות</div>
+      <ul class="pj-spec">${(p.materials || []).map(m => `<li>${esc(m)}</li>`).join('')}</ul>
+
+      <div class="eyebrow" style="margin-top:22px">כלים</div>
+      <ul class="pj-spec">${(p.tools || []).map(m => `<li>${esc(m)}</li>`).join('')}</ul>
+
+      <div class="eyebrow" style="margin-top:26px">שלב אחר שלב</div>
+      ${(p.steps || []).map((st, i) => `<button class="step${done.has(i) ? ' done' : ''}" data-step="${i}">
+        <span class="step-box">✓</span>
+        <span class="step-n">${String(i + 1).padStart(2, '0')}</span>
+        <span class="step-main">
+          <span class="step-t">${esc(st.t)}</span>
+          <span class="step-d">${esc(st.d)}</span>
+        </span>
+      </button>`).join('')}
+
+      ${p.tip ? `<div class="pj-tip"><span class="em">💡</span><span>${esc(p.tip)}</span></div>` : ''}`;
+  }
+
+  function openProject(id) {
+    const p = Store.find('projects', id);
+    if (!p) return toast('הפרויקטון כבר לא זמין');
+    openPj = p;
+    sheet({
+      title: `${p.emoji || '🪚'} ${p.title}`,
+      body: projectBody(p),
+      foot: `<div class="btn-row">
+        <button class="btn btn-quiet btn-sm" data-pj-reset="${esc(p.id)}">איפוס הסימונים</button>
+        <button class="btn btn-quiet btn-sm" style="flex:1" data-go="activities">רוצה ללמוד בסדנה</button>
+      </div>`,
+      onClose: () => { openPj = null; renderProjects(); }
+    });
+  }
+
+  /** מעדכן רק את השלב שנלחץ ואת מד ההתקדמות — בלי לרנדר מחדש את כל המסך */
+  function paintProgress() {
+    if (!openPj) return;
+    const total = (openPj.steps || []).length;
+    const done = Store.progressOf(openPj.id).filter(i => i < total);
+    const label = $('#pj-count'), bar = $('#pj-bar');
+    if (label) label.textContent = `${done.length} מתוך ${total}`;
+    if (bar) {
+      bar.style.width = (total ? Math.round(done.length / total * 100) : 0) + '%';
+      bar.classList.toggle('full', total > 0 && done.length === total);
+    }
+    $$('#sheet-body .step').forEach(el =>
+      el.classList.toggle('done', done.includes(Number(el.dataset.step))));
+  }
+
+  /* ======================================================================
      חנות
      ====================================================================== */
   function renderShop() {
@@ -474,6 +586,18 @@ const App = (() => {
       const act = t.closest('[data-act]');
       if (act) { actTab = act.dataset.act; return renderActivities(); }
 
+      const pjc = t.closest('[data-pj]');
+      if (pjc) return openProject(pjc.dataset.pj);
+
+      const lvl = t.closest('[data-lvl]');
+      if (lvl) { pjFilter = lvl.dataset.lvl; return renderProjects(); }
+
+      const stp = t.closest('[data-step]');
+      if (stp && openPj) { Store.toggleStep(openPj.id, Number(stp.dataset.step)); return paintProgress(); }
+
+      const rst = t.closest('[data-pj-reset]');
+      if (rst) { Store.resetProgress(rst.dataset.pjReset); paintProgress(); return toast('הסימונים אופסו'); }
+
       const prod = t.closest('[data-prod]');
       if (prod) return openProduct(prod.dataset.prod);
 
@@ -536,6 +660,7 @@ const App = (() => {
     renderBadges();
     renderHome();
     renderActivities();
+    renderProjects();
     renderShop();
     renderMe();
   }

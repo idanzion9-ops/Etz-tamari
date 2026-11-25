@@ -48,6 +48,7 @@ const Admin = (() => {
     { k: 'calendar',  i: '📅', t: 'יומן ומועדים' },
     { k: 'workshops', i: '🪵', t: 'סדנאות' },
     { k: 'classes',   i: '👥', t: 'חוגים' },
+    { k: 'projects',  i: '♻️', t: 'פרויקטונים' },
     { k: 'products',  i: '🛒', t: 'חנות' },
     { k: 'orders',    i: '📦', t: 'הזמנות' },
     { k: 'people',    i: '📇', t: 'משתתפים' },
@@ -111,6 +112,33 @@ const Admin = (() => {
     return out;
   }
 
+  /* ---- פרויקטון: המערכים נערכים כטקסט, שורה לכל פריט ---- */
+
+  function pjToForm(x) {
+    if (!x) return {};
+    return {
+      ...x,
+      materials: (x.materials || []).join('\n'),
+      tools: (x.tools || []).join('\n'),
+      steps: (x.steps || []).map(st => `${st.t} | ${st.d}`).join('\n')
+    };
+  }
+
+  function pjFromForm(d) {
+    const lines = v => String(v || '').split('\n').map(x => x.trim()).filter(Boolean);
+    return {
+      ...d,
+      materials: lines(d.materials),
+      tools: lines(d.tools),
+      steps: lines(d.steps).map(line => {
+        const i = line.indexOf('|');
+        return i > -1
+          ? { t: line.slice(0, i).trim(), d: line.slice(i + 1).trim() }
+          : { t: line, d: '' };
+      })
+    };
+  }
+
   /** עורך פריט באוסף — פותח מגירה משנית בתוך אותה מגירה */
   function editor(coll, fields, item, title) {
     sheetBody(`<button class="mini" data-adm="${view}" style="margin-bottom:16px">→ ביטול</button>
@@ -166,6 +194,17 @@ const Admin = (() => {
       { k: 'capacity', type: 'num', t: 'מספר מקומות' },
       { k: 'image', type: 'img', t: 'תמונה' },
       { k: 'active', type: 'check', t: 'מוצג לקהל', def: true }
+    ],
+    projects: [
+      { k: 'title', t: 'שם הפרויקטון' },
+      { k: 'emoji', t: 'סמל', ph: '🪚' },
+      { k: 'summary', t: 'משפט פתיחה' },
+      { k: 'level', type: 'select', t: 'רמת קושי', opts: [['קל מאוד', 'קל מאוד'], ['קל', 'קל'], ['קל-בינוני', 'קל-בינוני'], ['בינוני', 'בינוני']] },
+      { k: 'time', t: 'זמן עבודה משוער', ph: 'שעה וחצי' },
+      { k: 'materials', type: 'area', t: 'חומרים — שורה לכל פריט' },
+      { k: 'tools', type: 'area', t: 'כלים — שורה לכל כלי' },
+      { k: 'steps', type: 'area', t: 'שלבים — שורה לכל שלב, בפורמט: כותרת | פירוט' },
+      { k: 'tip', type: 'area', t: 'טיפ לסיום' }
     ],
     products: [
       { k: 'name', t: 'שם הפריט' },
@@ -233,7 +272,8 @@ const Admin = (() => {
     products: ['פריט', 'פריט לחנות'], events: ['מועד', 'מועד ביומן'],
     participants: ['משתתף', 'משתתף חדש'], inventory: ['פריט מלאי', 'פריט מלאי'],
     finance: ['תנועה', 'תנועה כספית'], tasks: ['משימה', 'משימה חדשה'],
-    registrations: ['הרשמה', 'הרשמה חדשה'], orders: ['הזמנה', 'הזמנה חדשה']
+    registrations: ['הרשמה', 'הרשמה חדשה'], orders: ['הזמנה', 'הזמנה חדשה'],
+    projects: ['פרויקטון', 'פרויקטון חדש']
   };
 
   /* ======================================================================
@@ -249,7 +289,7 @@ const Admin = (() => {
       const counts = { registrations: pend + inbox };
 
       return `<div class="stat-strip">
-          <div class="stat"><b>${pend + inbox}</b><span>הרשמות לטיפול</span></div>
+          <div class="stat"><b>${pend + inbox}</b><span>הרשמות ממתינות</span></div>
           <div class="stat"><b>${upcoming}</b><span>מועדים קרובים</span></div>
           <div class="stat"><b>${c.tasks.filter(t => !t.done).length}</b><span>משימות פתוחות</span></div>
         </div>
@@ -324,6 +364,13 @@ const Admin = (() => {
         'עוד לא הוספתם חוגים.', 'חוג חדש');
     },
 
+    projects() {
+      return listBlock('projects', Store.list('projects').map(x =>
+        itemRow('projects', x, `${x.emoji || ''} ${x.title}`,
+          `${x.level || ''} · ${x.time || ''} · ${(x.steps || []).length} שלבים`)),
+        'עוד לא הוספתם פרויקטונים.', 'פרויקטון חדש');
+    },
+
     products() {
       return listBlock('products', Store.list('products').map(x =>
         itemRow('products', x, x.name, `${money(x.price)}${x.stock !== '' && x.stock !== undefined ? ` · במלאי ${x.stock}` : ''}`)),
@@ -391,6 +438,8 @@ const Admin = (() => {
           { k: 'aboutHtml', type: 'area', t: 'הטקסט', ph: 'אפשר להשתמש ב-<p> ו-<strong>' },
           { k: 'aboutImage', type: 'img', t: 'תמונה' }
         ], s)}
+        <div class="eyebrow" style="margin-top:24px">מדור הפרויקטונים</div>
+        ${form([{ k: 'projectsIntro', type: 'area', t: 'פסקת הפתיחה של המדור' }], s)}
         <div class="eyebrow" style="margin-top:24px">שעות פתיחה</div>
         ${(s.hours || []).map((h, i) => `<div class="grid2">
           <div class="field"><label>ימים</label><input data-hour="d" data-i="${i}" value="${esc(h.d)}"></div>
@@ -454,13 +503,15 @@ const Admin = (() => {
       const add = t.closest('[data-new]');
       if (add) {
         const coll = add.dataset.new;
-        return editor(coll, FIELDS[coll], { active: true, date: todayISO() }, TITLES[coll][1]);
+        const blank = coll === 'projects' ? { emoji: '🪚', level: 'קל' } : { active: true, date: todayISO() };
+        return editor(coll, FIELDS[coll], blank, TITLES[coll][1]);
       }
 
       const ed = t.closest('[data-edit]');
       if (ed) {
         const coll = ed.dataset.edit;
-        return editor(coll, FIELDS[coll], Store.find(coll, ed.dataset.id), 'עריכת ' + TITLES[coll][0]);
+        const rec = Store.find(coll, ed.dataset.id);
+        return editor(coll, FIELDS[coll], coll === 'projects' ? pjToForm(rec) : rec, 'עריכת ' + TITLES[coll][0]);
       }
 
       const del = t.closest('[data-del]');
@@ -473,8 +524,9 @@ const Admin = (() => {
       const save = t.closest('[data-save]');
       if (save) {
         const coll = save.dataset.save;
-        const data = collect($('#sheet-body'));
+        let data = collect($('#sheet-body'));
         if (!data.id) delete data.id;
+        if (coll === 'projects') data = pjFromForm(data);
         ['price', 'capacity', 'sessions', 'qty', 'amount', 'stock', 'taken', 'people', 'total'].forEach(k => {
           if (data[k] !== undefined && data[k] !== '') data[k] = Number(data[k]);
         });
@@ -540,6 +592,7 @@ const Admin = (() => {
       name: d.name, tagline: d.tagline, heroEmoji: d.heroEmoji,
       heroTitle: d.heroTitle, heroText: d.heroText,
       aboutTitle: d.aboutTitle, aboutHtml: d.aboutHtml, aboutImage: d.aboutImage,
+      projectsIntro: d.projectsIntro,
       pin: d.pin || s.pin,
       bookingSlots: String(d.slots || '').split(',').map(x => x.trim()).filter(Boolean),
       contact: {

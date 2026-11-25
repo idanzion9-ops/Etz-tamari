@@ -1,0 +1,61 @@
+name: פרסום האפליקציה
+
+# רץ אוטומטית בכל דחיפה ל-main, וגם ידנית מכפתור "Run workflow"
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: משיכת הקוד
+        uses: actions/checkout@v4
+
+      - name: בדיקת תקינות קובץ התוכן
+        run: |
+          python3 - <<'PY'
+          import json, sys
+          with open('assets/data/content.json', encoding='utf-8') as f:
+              d = json.load(f)
+          missing = [k for k in ('site', 'workshops', 'classes', 'projects', 'products') if k not in d]
+          if missing:
+              sys.exit('חסרים מפתחות בקובץ התוכן: ' + ', '.join(missing))
+          print('content.json תקין —',
+                len(d['workshops']), 'סדנאות,',
+                len(d['classes']), 'חוגים,',
+                len(d['projects']), 'פרויקטונים,',
+                len(d['products']), 'מוצרים')
+          PY
+
+      - name: בדיקת תחביר של קבצי הקוד
+        run: |
+          for f in assets/js/*.js sw.js; do
+            node --check "$f" || exit 1
+          done
+          echo "כל קבצי ה-JavaScript תקינים"
+
+      - name: הגדרת Pages
+        uses: actions/configure-pages@v5
+
+      - name: אריזת האתר
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+
+      - name: פרסום
+        id: deployment
+        uses: actions/deploy-pages@v4

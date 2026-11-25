@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>עץ תמרי — נגרות, יצירה וקהילה</title>
-<meta name="description" content="נגריה קהילתית: סדנאות חד־פעמיות, חוגים מתמשכים, שעות עבודה חופשיות וחנות כלי נגרות.">
+<meta name="description" content="נגרייה קהילתית: סדנאות, חוגים, מרחב עבודה שקט ורעיונות לפרויקטים קטנים משאריות עץ.">
 <meta name="theme-color" content="#F1EDE2">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="עץ תמרי">
@@ -12,7 +12,7 @@
 
 <meta property="og:type" content="website">
 <meta property="og:title" content="עץ תמרי — נגרות, יצירה וקהילה">
-<meta property="og:description" content="סדנאות, חוגים ומרחב עבודה בעץ. בלי ניסיון קודם, עם הרבה נסורת.">
+<meta property="og:description" content="שעתיים של שקט ומשהו שעשית בידיים. סדנאות, חוגים ופרויקטונים משאריות עץ.">
 
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-192.png">
@@ -69,6 +69,12 @@
     </section>
 
     <section class="section">
+      <div class="eyebrow">לעשות בבית</div>
+      <div id="home-projects"></div>
+      <button class="btn btn-quiet btn-block" style="margin-top:14px" data-go="projects">כל הפרויקטונים</button>
+    </section>
+
+    <section class="section">
       <div class="eyebrow">המקום</div>
       <div class="card" id="home-about"></div>
     </section>
@@ -90,6 +96,21 @@
         <button role="tab" aria-selected="false" data-act="private">פרטי / קבוצה</button>
       </div>
       <div id="activities-list"></div>
+    </div>
+  </section>
+
+  <!-- ===================== פרויקטונים ===================== -->
+  <section class="screen" id="screen-projects">
+    <div class="section">
+      <div class="eyebrow">פרויקטונים</div>
+      <h2 style="font-size:30px;margin-bottom:8px">משאריות עץ</h2>
+      <p class="lead" id="projects-intro" style="margin:0 0 18px"></p>
+      <div class="seg" role="tablist" id="projects-filter">
+        <button role="tab" aria-selected="true" data-lvl="all">הכול</button>
+        <button role="tab" aria-selected="false" data-lvl="קל">קל</button>
+        <button role="tab" aria-selected="false" data-lvl="בינוני">בינוני</button>
+      </div>
+      <div class="pj-grid" id="projects-grid"></div>
     </div>
   </section>
 
@@ -146,6 +167,7 @@
 <nav class="tabbar" role="tablist" aria-label="ניווט ראשי">
   <button class="tab" role="tab" aria-selected="true"  data-go="home"><span class="ico">🏠</span>בית</button>
   <button class="tab" role="tab" aria-selected="false" data-go="activities"><span class="ico">🪚</span>פעילויות</button>
+  <button class="tab" role="tab" aria-selected="false" data-go="projects"><span class="ico">♻️</span>פרויקטונים</button>
   <button class="tab" role="tab" aria-selected="false" data-go="shop"><span class="ico">🛒</span>חנות</button>
   <button class="tab" role="tab" aria-selected="false" data-go="me"><span class="ico">👤</span>שלי</button>
 </nav>
