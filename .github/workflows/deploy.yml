@@ -13,14 +13,14 @@ permissions:
 
 concurrency:
   group: pages
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
-  deploy:
+  # ------------------------------------------------------------------
+  # בנייה: בדיקות תקינות ואריזת האתר
+  # ------------------------------------------------------------------
+  build:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: משיכת הקוד
         uses: actions/checkout@v4
@@ -34,6 +34,10 @@ jobs:
           missing = [k for k in ('site', 'workshops', 'classes', 'projects', 'products') if k not in d]
           if missing:
               sys.exit('חסרים מפתחות בקובץ התוכן: ' + ', '.join(missing))
+          for p in d['projects']:
+              for k in ('title', 'level', 'time', 'steps'):
+                  if not p.get(k):
+                      sys.exit('פרויקטון חסר שדה %s: %s' % (k, p.get('title', '?')))
           print('content.json תקין —',
                 len(d['workshops']), 'סדנאות,',
                 len(d['classes']), 'חוגים,',
@@ -56,6 +60,18 @@ jobs:
         with:
           path: '.'
 
+  # ------------------------------------------------------------------
+  # פרסום: job נפרד בכוונה.
+  # כששני השלבים רצים יחד, deploy-pages לפעמים מחפש את החבילה
+  # לפני שה-API הספיק לרשום אותה ונכשל ב-"No artifacts named github-pages".
+  # ------------------------------------------------------------------
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
       - name: פרסום
         id: deployment
         uses: actions/deploy-pages@v4
