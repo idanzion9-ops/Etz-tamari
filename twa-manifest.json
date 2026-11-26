@@ -32,6 +32,6 @@
   "isChromeOSOnly": false,
   "isMetaQuest": false,
   "fullScopeUrl": "https://idanzion9-ops.github.io/Etz-tamari/",
-  "minSdkVersion": 23,
+  "minSdkVersion": 24,
   "orientation": "portrait"
 }

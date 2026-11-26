@@ -152,6 +152,15 @@ jobs:
           # update מייצר את הפרויקט מתוך twa-manifest.json.
           # הדגל משתנה בין גרסאות, לכן נסיון כפול.
           bubblewrap update --skipVersionUpgrade || bubblewrap update
+
+          # androidbrowserhelper דורש minSdk 24 (אנדרואיד 7).
+          # אם התבנית של Bubblewrap הכתיבה ערך נמוך יותר — מתקנים.
+          if grep -qE 'minSdkVersion\s+2[0-3]' app/build.gradle 2>/dev/null; then
+            sed -i -E 's/minSdkVersion\s+2[0-3]/minSdkVersion 24/' app/build.gradle
+            echo "minSdkVersion הועלה ל-24"
+          fi
+          grep -n 'minSdkVersion' app/build.gradle 2>/dev/null || true
+
           echo "--- קבצים שנוצרו ---"
           ls -la
 
