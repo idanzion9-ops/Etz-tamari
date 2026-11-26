@@ -422,7 +422,8 @@ const App = (() => {
     { k: 'class',    go: 'activities', ico: '👥', label: 'קבוצות וחוגים', cls: 't-class', note: 'מפגשים מתמשכים' },
     { k: 'shop',     go: 'shop',     ico: '🛒', label: 'חנות ציוד נגרות', cls: 't-shop', note: 'כלים וחומרים' },
     { k: 'moments',  go: 'moments',  ico: '📷', label: 'רגעים מהסדנה',  cls: 't-moment', note: 'מה קורה אצלנו' },
-    { k: 'about',    go: '',         ico: '🌳', label: 'אודות עץ תמרי',  cls: 't-about',  note: 'הסיפור שלנו' }
+    { k: 'about',    go: '',         ico: '🌳', label: 'אודות עץ תמרי',  cls: 't-about',  note: 'הסיפור שלנו' },
+    { k: 'memorial', go: 'memorial', ico: '🕯️', label: 'לזכרה',          cls: 't-mem',    note: 'תמר קדם סימן טוב ז״ל' }
   ];
 
   function renderTiles() {
@@ -487,6 +488,30 @@ const App = (() => {
             <div class="tiny muted">${esc(pl.desc || '')}</div></div>
           <span class="price">${money(pl.price)}</span>
         </div></div>`).join('')}` : '';
+  }
+
+  /* ======================================================================
+     לזכרה
+     ====================================================================== */
+
+  function renderMemorial() {
+    const m = Store.content.memorial;
+    const box = $('#memorial-body');
+    if (!box || !m) return;
+
+    box.innerHTML = `
+      ${m.photo ? `<div class="mem-portrait"><img src="${esc(m.photo)}" alt="תמר קדם סימן טוב ז״ל"></div>` : ''}
+      <h2>${esc(m.title)}</h2>
+      <div class="mem-rule" aria-hidden="true"></div>
+      ${m.lead ? `<p class="mem-lead">${esc(m.lead)}</p>` : ''}
+      ${(m.paragraphs || []).map(t => `<p>${esc(t)}</p>`).join('')}
+      <div class="mem-family">
+        ${m.familyIntro ? `<p>${esc(m.familyIntro)}</p>` : ''}
+        ${(m.familyNames || []).length
+          ? `<div class="mem-names">${m.familyNames.map(n => `<span>${esc(n)}</span>`).join('')}</div>` : ''}
+        ${m.familyOutro ? `<p>${esc(m.familyOutro)}</p>` : ''}
+      </div>
+      <p class="mem-close">יהי זכרם ברוך</p>`;
   }
 
   /* ======================================================================
@@ -762,6 +787,7 @@ const App = (() => {
     renderTiles();
     renderOpen();
     renderMoments();
+    renderMemorial();
     renderActivities();
     renderProjects();
     renderShop();

@@ -50,6 +50,7 @@ const Admin = (() => {
     { k: 'classes',   i: '👥', t: 'חוגים' },
     { k: 'projects',  i: '♻️', t: 'פרויקטונים' },
     { k: 'moments',   i: '📷', t: 'רגעים מהסדנה' },
+    { k: 'memorial',  i: '🕯️', t: 'לזכרה' },
     { k: 'openws',    i: '🪚', t: 'הסדנה הפתוחה' },
     { k: 'products',  i: '🛒', t: 'חנות' },
     { k: 'orders',    i: '📦', t: 'הזמנות' },
@@ -377,6 +378,33 @@ const Admin = (() => {
         'עוד לא הוספתם פרויקטונים.', 'פרויקטון חדש');
     },
 
+    memorial() {
+      const m = Store.content.memorial || {};
+      return `<p class="hint" style="margin-top:0">הטקסט מוצג בדיוק כפי שנכתב כאן. שורה ריקה בין פסקאות מפרידה ביניהן.</p>
+        ${form([
+          { k: 'mem_title', t: 'כותרת' },
+          { k: 'mem_lead', type: 'area', t: 'פסקת הפתיחה' },
+          { k: 'mem_body', type: 'area', t: 'גוף הטקסט — פסקה בכל שורה' },
+          { k: 'mem_photo', type: 'img', t: 'התצלום' }
+        ], {
+          mem_title: m.title,
+          mem_lead: m.lead,
+          mem_body: (m.paragraphs || []).join('\n'),
+          mem_photo: m.photo
+        })}
+        <div class="eyebrow" style="margin-top:24px">המשפחה</div>
+        ${form([
+          { k: 'mem_fin', type: 'area', t: 'משפט פתיחה' },
+          { k: 'mem_names', t: 'השמות — מופרדים בפסיק' },
+          { k: 'mem_fout', type: 'area', t: 'משפט סיום' }
+        ], {
+          mem_fin: m.familyIntro,
+          mem_names: (m.familyNames || []).join(', '),
+          mem_fout: m.familyOutro
+        })}
+        <button class="btn btn-primary btn-block" data-save-mem="1" style="margin-top:18px">שמירה</button>`;
+    },
+
     moments() {
       return `<p class="hint" style="margin-top:0">התמונות מוקטנות אוטומטית. שמרו על עשר־חמש־עשרה תמונות טובות במקום הרבה בינוניות.</p>`
         + listBlock('moments', Store.list('moments').map(x =>
@@ -589,6 +617,7 @@ const Admin = (() => {
 
       if (t.closest('[data-save-site]')) return saveSite();
       if (t.closest('[data-save-ow]')) return saveOpenWorkshop();
+      if (t.closest('[data-save-mem]')) return saveMemorial();
 
       const pull = t.closest('[data-pull]');
       if (pull) {
@@ -659,6 +688,23 @@ const Admin = (() => {
     Store.saveContent();
     refreshPublic();
     toast('התוכן נשמר. לפרסום לכולם — ״פרסום וגיבוי״.');
+  }
+
+  function saveMemorial() {
+    const d = collect($('#sheet-body'));
+    const lines = v => String(v || '').split('\n').map(x => x.trim()).filter(Boolean);
+    Store.content.memorial = {
+      title: d.mem_title,
+      photo: d.mem_photo,
+      lead: d.mem_lead,
+      paragraphs: lines(d.mem_body),
+      familyIntro: d.mem_fin,
+      familyNames: String(d.mem_names || '').split(',').map(x => x.trim()).filter(Boolean),
+      familyOutro: d.mem_fout
+    };
+    Store.saveContent();
+    refreshPublic();
+    toast('נשמר');
   }
 
   function saveOpenWorkshop() {
