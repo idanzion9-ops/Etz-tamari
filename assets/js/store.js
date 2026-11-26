@@ -49,6 +49,7 @@ const Store = (() => {
     workshops: [],
     classes: [],
     projects: [],
+    moments: [],
     products: [],
     events: [],
     participants: [],
@@ -229,6 +230,7 @@ const Store = (() => {
       workshops: content.workshops,
       classes: content.classes,
       projects: content.projects,
+      moments: content.moments,
       products: content.products,
       events: content.events.map(e => ({ id: e.id, title: e.title, date: e.date, start: e.start, end: e.end, type: e.type, capacity: e.capacity, taken: e.taken }))
     };

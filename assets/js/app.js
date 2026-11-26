@@ -16,7 +16,6 @@ const App = (() => {
     const s = Store.site();
     $('#brand-name').textContent = s.name;
     $('#brand-tagline').textContent = s.tagline;
-    $('#brand-emoji').textContent = s.heroEmoji || '🪵';
     $('#foot-name').textContent = s.name;
     $('#foot-tagline').textContent = s.tagline;
     document.title = `${s.name} — ${s.tagline}`;
@@ -45,9 +44,6 @@ const App = (() => {
     const s = Store.site();
     $('#hero-title').innerHTML = safeHtml(s.heroTitle);
     $('#hero-text').textContent = s.heroText;
-
-    $('#hero-strip').innerHTML = (s.stats || [])
-      .map(x => `<div><b>${esc(x.n)}</b><span>${esc(x.l)}</span></div>`).join('');
 
     // קרוב בזמן — אירועים מהיומן שפתוחים לקהל
     const today = todayISO();
@@ -414,6 +410,100 @@ const App = (() => {
       el.classList.toggle('done', done.includes(Number(el.dataset.step))));
   }
 
+
+  /* ======================================================================
+     דף הבית — גריד המדורים
+     ====================================================================== */
+
+  const TILES = [
+    { k: 'open',     go: 'open',     ico: '🪚', label: 'הסדנה הפתוחה', cls: 't-open',   note: 'שעות עבודה חופשיות' },
+    { k: 'work',     go: 'activities', ico: '🪵', label: 'סדנאות עץ',   cls: 't-work',   note: 'חד־פעמיות' },
+    { k: 'proj',     go: 'projects', ico: '♻️', label: 'פרויקטונים',   cls: 't-proj',   note: 'משאריות עץ' },
+    { k: 'class',    go: 'activities', ico: '👥', label: 'קבוצות וחוגים', cls: 't-class', note: 'מפגשים מתמשכים' },
+    { k: 'shop',     go: 'shop',     ico: '🛒', label: 'חנות ציוד נגרות', cls: 't-shop', note: 'כלים וחומרים' },
+    { k: 'moments',  go: 'moments',  ico: '📷', label: 'רגעים מהסדנה',  cls: 't-moment', note: 'מה קורה אצלנו' },
+    { k: 'about',    go: '',         ico: '🌳', label: 'אודות עץ תמרי',  cls: 't-about',  note: 'הסיפור שלנו' }
+  ];
+
+  function renderTiles() {
+    const box = $('#home-tiles');
+    if (!box) return;
+    box.innerHTML = TILES.map(t => {
+      // כמה פעילויות פתוחות? מציגים דגל קטן כשיש מה להראות
+      let flag = '';
+      if (t.k === 'work') {
+        const n = Store.list('workshops').filter(w => w.active !== false).length;
+        if (n) flag = `<span class="flag">${n}</span>`;
+      }
+      if (t.k === 'class') {
+        const n = Store.list('classes').filter(c => c.active !== false).length;
+        if (n) flag = `<span class="flag">${n}</span>`;
+      }
+      if (t.k === 'proj') {
+        const n = Store.list('projects').length;
+        if (n) flag = `<span class="flag">${n}</span>`;
+      }
+      return `<button class="tile ${t.cls}" data-tile="${t.k}"${t.go ? ` data-go="${t.go}"` : ''}>
+        ${flag}
+        <span class="ico" aria-hidden="true">${t.ico}</span>
+        <span class="label">${esc(t.label)}</span>
+        <span class="note">${esc(t.note)}</span>
+      </button>`;
+    }).join('');
+  }
+
+  function openAbout() {
+    const s = Store.site();
+    sheet({
+      title: s.aboutTitle || 'אודות עץ תמרי',
+      body: `${s.aboutImage
+          ? `<img src="${esc(s.aboutImage)}" alt="" style="width:120px;height:120px;border-radius:50%;object-fit:cover;border:1px solid var(--line);margin-bottom:18px">`
+          : `<img src="logo-large.png" alt="" style="width:120px;height:120px;margin:0 auto 18px">`}
+        <div class="lead">${safeHtml(s.aboutHtml)}</div>
+        <div class="eyebrow" style="margin-top:26px">שעות פתיחה</div>
+        ${(s.hours || []).map(h => `<div class="switchrow"><span style="font-weight:600">${esc(h.d)}</span><span class="num muted">${esc(h.t)}</span></div>`).join('')}
+        ${s.contact?.address ? `<div class="switchrow"><span style="font-weight:600">כתובת</span><span class="muted">${esc(s.contact.address)}</span></div>` : ''}`
+    });
+  }
+
+  /* ======================================================================
+     הסדנה הפתוחה
+     ====================================================================== */
+
+  function renderOpen() {
+    const o = Store.site().openWorkshop || {};
+    $('#open-title').textContent = o.title || 'שעות עבודה חופשיות';
+    $('#open-text').textContent  = o.text || '';
+    $('#open-hours').innerHTML = (o.hours || []).map(h =>
+      `<div class="switchrow"><span style="font-weight:600">${esc(h.d)}</span><span class="num muted">${esc(h.t)}</span></div>`
+    ).join('') || '<p class="muted" style="margin:0">השעות יתעדכנו בקרוב.</p>';
+
+    const plans = o.plans || [];
+    $('#open-plans').innerHTML = plans.length ? `
+      <div class="eyebrow" style="margin-top:28px">מסלולים</div>
+      ${plans.map(pl => `<div class="card" style="padding:18px">
+        <div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start">
+          <div><div style="font-weight:600;font-size:17px">${esc(pl.name)}${pl.best ? ' <span class="chip chip--rust">הכי משתלם</span>' : ''}</div>
+            <div class="tiny muted">${esc(pl.desc || '')}</div></div>
+          <span class="price">${money(pl.price)}</span>
+        </div></div>`).join('')}` : '';
+  }
+
+  /* ======================================================================
+     רגעים מהסדנה
+     ====================================================================== */
+
+  function renderMoments() {
+    const arr = Store.list('moments');
+    $('#moments-intro').textContent = Store.site().momentsIntro || '';
+    $('#moments-grid').innerHTML = arr.length
+      ? arr.map(m => `<div class="moment" ${m.image ? `style="background-image:url('${esc(m.image)}')"` : ''}>
+          ${m.image ? '' : '📷'}
+          ${m.caption ? `<span class="cap">${esc(m.caption)}</span>` : ''}
+        </div>`).join('')
+      : `<div class="empty" style="grid-column:1/-1"><div class="em">📷</div><p>התמונות הראשונות בדרך.</p></div>`;
+  }
+
   /* ======================================================================
      חנות
      ====================================================================== */
@@ -566,6 +656,16 @@ const App = (() => {
     document.addEventListener('click', e => {
       const t = e.target;
 
+      const tile = t.closest('[data-tile]');
+      if (tile) {
+        const k = tile.dataset.tile;
+        if (k === 'work')  actTab = 'workshops';
+        if (k === 'class') actTab = 'classes';
+        if (k === 'work' || k === 'class') renderActivities();
+        if (k === 'about') return openAbout();
+        // שאר הכרטיסיות מנווטות דרך data-go
+      }
+
       const open = t.closest('[data-open]');
       if (open) return openActivity(open.dataset.open, open.dataset.id);
 
@@ -659,6 +759,9 @@ const App = (() => {
     renderBrand();
     renderBadges();
     renderHome();
+    renderTiles();
+    renderOpen();
+    renderMoments();
     renderActivities();
     renderProjects();
     renderShop();

@@ -2,7 +2,7 @@
    מעטפת האפליקציה נשמרת במטמון; התוכן תמיד נטען מהרשת קודם,
    כדי שפרסום חדש יופיע מיד ולא ייתקע על גרסה ישנה. */
 
-const VERSION = 'etz-v4';
+const VERSION = 'etz-v5';
 const SHELL = [
   './',
   './index.html',
@@ -11,7 +11,11 @@ const SHELL = [
   './assets/js/store.js',
   './assets/js/ui.js',
   './assets/js/app.js',
-  './assets/js/admin.js'
+  './assets/js/admin.js',
+  './assets/js/a11y.js',
+  './logo-header.png',
+  './logo-large.png',
+  './icon-192.png'
 ];
 
 self.addEventListener('install', e => {

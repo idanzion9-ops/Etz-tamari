@@ -1,24 +1,50 @@
 {
-  "id": "/Etz-tamari/",
+  "id": "/",
   "name": "עץ תמרי — נגרות, יצירה וקהילה",
   "short_name": "עץ תמרי",
   "description": "נגרייה קהילתית: סדנאות, חוגים, מרחב עבודה שקט ורעיונות לפרויקטים קטנים משאריות עץ.",
   "lang": "he",
   "dir": "rtl",
-  "start_url": "/Etz-tamari/",
-  "scope": "/Etz-tamari/",
+  "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#F1EDE2",
   "theme_color": "#F1EDE2",
-  "categories": ["lifestyle", "education"],
+  "categories": [
+    "lifestyle",
+    "education"
+  ],
   "icons": [
-    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
-    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
-    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
   ],
   "shortcuts": [
-    { "name": "פרויקטונים", "url": "/Etz-tamari/#projects", "description": "רעיונות משאריות עץ" },
-    { "name": "סדנאות וחוגים", "url": "/Etz-tamari/#activities", "description": "לוח הפעילויות" }
+    {
+      "name": "הסדנה הפתוחה",
+      "url": "/#open",
+      "description": "שעות עבודה חופשיות"
+    },
+    {
+      "name": "פרויקטונים",
+      "url": "/#projects",
+      "description": "רעיונות משאריות עץ"
+    }
   ]
 }

@@ -49,6 +49,8 @@ const Admin = (() => {
     { k: 'workshops', i: '🪵', t: 'סדנאות' },
     { k: 'classes',   i: '👥', t: 'חוגים' },
     { k: 'projects',  i: '♻️', t: 'פרויקטונים' },
+    { k: 'moments',   i: '📷', t: 'רגעים מהסדנה' },
+    { k: 'openws',    i: '🪚', t: 'הסדנה הפתוחה' },
     { k: 'products',  i: '🛒', t: 'חנות' },
     { k: 'orders',    i: '📦', t: 'הזמנות' },
     { k: 'people',    i: '📇', t: 'משתתפים' },
@@ -206,6 +208,10 @@ const Admin = (() => {
       { k: 'steps', type: 'area', t: 'שלבים — שורה לכל שלב, בפורמט: כותרת | פירוט' },
       { k: 'tip', type: 'area', t: 'טיפ לסיום' }
     ],
+    moments: [
+      { k: 'image', type: 'img', t: 'התמונה' },
+      { k: 'caption', t: 'כיתוב קצר' }
+    ],
     products: [
       { k: 'name', t: 'שם הפריט' },
       { k: 'price', type: 'num', t: 'מחיר (₪)' },
@@ -273,7 +279,7 @@ const Admin = (() => {
     participants: ['משתתף', 'משתתף חדש'], inventory: ['פריט מלאי', 'פריט מלאי'],
     finance: ['תנועה', 'תנועה כספית'], tasks: ['משימה', 'משימה חדשה'],
     registrations: ['הרשמה', 'הרשמה חדשה'], orders: ['הזמנה', 'הזמנה חדשה'],
-    projects: ['פרויקטון', 'פרויקטון חדש']
+    projects: ['פרויקטון', 'פרויקטון חדש'], moments: ['תמונה', 'תמונה חדשה']
   };
 
   /* ======================================================================
@@ -371,6 +377,50 @@ const Admin = (() => {
         'עוד לא הוספתם פרויקטונים.', 'פרויקטון חדש');
     },
 
+    moments() {
+      return `<p class="hint" style="margin-top:0">התמונות מוקטנות אוטומטית. שמרו על עשר־חמש־עשרה תמונות טובות במקום הרבה בינוניות.</p>`
+        + listBlock('moments', Store.list('moments').map(x =>
+            `<div class="adm-list-item">
+              <div class="head">
+                <div style="display:flex;gap:12px;align-items:center;min-width:0">
+                  ${x.image ? `<img src="${esc(x.image)}" alt="" style="width:56px;height:56px;border-radius:10px;object-fit:cover;border:1px solid var(--line);flex-shrink:0">` : '<span style="font-size:26px">📷</span>'}
+                  <div style="min-width:0"><div style="font-weight:600">${esc(x.caption || 'ללא כיתוב')}</div></div>
+                </div>
+                <div class="acts">
+                  <button class="mini" data-edit="moments" data-id="${esc(x.id)}">עריכה</button>
+                  <button class="mini mini--stop" data-del="moments" data-id="${esc(x.id)}">מחיקה</button>
+                </div>
+              </div></div>`),
+          'עוד לא העליתם תמונות.', 'תמונה חדשה');
+    },
+
+    openws() {
+      const o = Store.site().openWorkshop || {};
+      return `<div class="eyebrow">טקסט המסך</div>
+        ${form([
+          { k: 'ow_title', t: 'כותרת' },
+          { k: 'ow_text', type: 'area', t: 'תיאור' }
+        ], { ow_title: o.title, ow_text: o.text })}
+
+        <div class="eyebrow" style="margin-top:24px">שעות הפעילות</div>
+        ${(o.hours || []).map((h, i) => `<div class="grid2">
+          <div class="field"><label>ימים</label><input data-owh="d" data-i="${i}" value="${esc(h.d)}"></div>
+          <div class="field"><label>שעות</label><input data-owh="t" data-i="${i}" value="${esc(h.t)}"></div></div>`).join('')}
+
+        <div class="eyebrow" style="margin-top:24px">מסלולים ומחירים</div>
+        <p class="hint" style="margin-top:0">הרכישה עצמה תיפתח בשלב הבא. כרגע המחירים מוצגים בלבד.</p>
+        ${(o.plans || []).map((pl, i) => `<div class="card" style="padding:14px">
+          <div class="field"><label>שם המסלול</label><input data-owp="name" data-i="${i}" value="${esc(pl.name)}"></div>
+          <div class="field"><label>תיאור</label><input data-owp="desc" data-i="${i}" value="${esc(pl.desc || '')}"></div>
+          <div class="grid2">
+            <div class="field"><label>מחיר (₪)</label><input type="number" data-owp="price" data-i="${i}" value="${esc(pl.price)}"></div>
+            <div class="switchrow"><label style="margin:0">הכי משתלם</label>
+              <input type="checkbox" data-owp="best" data-i="${i}" style="width:auto" ${pl.best ? 'checked' : ''}></div>
+          </div></div>`).join('')}
+
+        <button class="btn btn-primary btn-block" data-save-ow="1" style="margin-top:18px">שמירת הסדנה הפתוחה</button>`;
+    },
+
     products() {
       return listBlock('products', Store.list('products').map(x =>
         itemRow('products', x, x.name, `${money(x.price)}${x.stock !== '' && x.stock !== undefined ? ` · במלאי ${x.stock}` : ''}`)),
@@ -438,6 +488,8 @@ const Admin = (() => {
           { k: 'aboutHtml', type: 'area', t: 'הטקסט', ph: 'אפשר להשתמש ב-<p> ו-<strong>' },
           { k: 'aboutImage', type: 'img', t: 'תמונה' }
         ], s)}
+        <div class="eyebrow" style="margin-top:24px">מדור הרגעים</div>
+        ${form([{ k: 'momentsIntro', t: 'פסקת הפתיחה' }], s)}
         <div class="eyebrow" style="margin-top:24px">מדור הפרויקטונים</div>
         ${form([{ k: 'projectsIntro', type: 'area', t: 'פסקת הפתיחה של המדור' }], s)}
         <div class="eyebrow" style="margin-top:24px">שעות פתיחה</div>
@@ -536,6 +588,7 @@ const Admin = (() => {
       }
 
       if (t.closest('[data-save-site]')) return saveSite();
+      if (t.closest('[data-save-ow]')) return saveOpenWorkshop();
 
       const pull = t.closest('[data-pull]');
       if (pull) {
@@ -593,6 +646,7 @@ const Admin = (() => {
       heroTitle: d.heroTitle, heroText: d.heroText,
       aboutTitle: d.aboutTitle, aboutHtml: d.aboutHtml, aboutImage: d.aboutImage,
       projectsIntro: d.projectsIntro,
+      momentsIntro: d.momentsIntro,
       pin: d.pin || s.pin,
       bookingSlots: String(d.slots || '').split(',').map(x => x.trim()).filter(Boolean),
       contact: {
@@ -605,6 +659,22 @@ const Admin = (() => {
     Store.saveContent();
     refreshPublic();
     toast('התוכן נשמר. לפרסום לכולם — ״פרסום וגיבוי״.');
+  }
+
+  function saveOpenWorkshop() {
+    const site = Store.site();
+    const o = site.openWorkshop || (site.openWorkshop = { hours: [], plans: [] });
+    const d = collect($('#sheet-body'));
+    o.title = d.ow_title;
+    o.text  = d.ow_text;
+    $$('[data-owh]').forEach(el => { o.hours[el.dataset.i][el.dataset.owh] = el.value; });
+    $$('[data-owp]').forEach(el => {
+      const pl = o.plans[el.dataset.i], k = el.dataset.owp;
+      pl[k] = k === 'best' ? el.checked : (k === 'price' ? Number(el.value) : el.value);
+    });
+    Store.saveContent();
+    refreshPublic();
+    toast('נשמר. לפרסום לכולם — ״פרסום וגיבוי״.');
   }
 
   function init(refresh) { refreshPublic = refresh || (() => {}); wire(); }

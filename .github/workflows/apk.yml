@@ -193,15 +193,25 @@ jobs:
       - name: איסוף התוצרים
         run: |
           mkdir -p out
-          find . -name '*.apk' -not -path './out/*' -exec cp {} out/ \;
-          find . -name '*.aab' -not -path './out/*' -exec cp {} out/ \;
+          echo "--- כל קבצי ה-APK שנוצרו ---"
+          find . -name '*.apk' -not -path './out/*'
+
+          # Bubblewrap מייצר גם קבצי ביניים לא חתומים. רק החתום ניתן להתקנה.
+          SIGNED=$(find . -name '*.apk' -not -path './out/*' \
+                     | grep -i 'signed' | grep -vi 'unsigned' | head -1)
+          if [ -z "$SIGNED" ]; then
+            echo "::error::לא נמצא APK חתום. ודאו שסודות הסיסמה נכונים."
+            exit 1
+          fi
+          cp "$SIGNED" out/etz-tamari.apk
+          echo "נארז: $SIGNED"
+
+          BUNDLE=$(find . -name '*.aab' -not -path './out/*' | head -1)
+          [ -n "$BUNDLE" ] && cp "$BUNDLE" out/etz-tamari.aab
+
           cp assetlinks.json out/
           echo "--- מה נארז ---"
           ls -la out
-          if ! ls out/*.apk >/dev/null 2>&1; then
-            echo "::error::לא נוצר קובץ APK"
-            exit 1
-          fi
 
       - name: העלאת החבילה
         uses: actions/upload-artifact@v4
