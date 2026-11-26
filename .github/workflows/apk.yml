@@ -30,8 +30,36 @@ jobs:
         with:
           node-version: '20'
 
-      - name: התקנת Android SDK
-        uses: android-actions/setup-android@v3
+      # ה-SDK כבר מותקן על הרנר של GitHub.
+      # android-actions/setup-android פוסל אותו ומנסה להחליפו — ונכשל.
+      # לכן משתמשים במותקן ישירות.
+      - name: איתור ה-Android SDK שעל הרנר
+        run: |
+          SDK="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-/usr/local/lib/android/sdk}}"
+          if [ ! -d "$SDK" ]; then
+            echo "::error::לא נמצא Android SDK על הרנר"
+            exit 1
+          fi
+          echo "ANDROID_SDK_ROOT=$SDK" >> "$GITHUB_ENV"
+          echo "ANDROID_HOME=$SDK"     >> "$GITHUB_ENV"
+          echo "נמצא SDK: $SDK"
+          ls "$SDK"
+          echo "--- cmdline-tools ---"
+          ls "$SDK/cmdline-tools" || echo "אין cmdline-tools"
+
+      - name: אישור רישיונות
+        run: |
+          # Bubblewrap מחפש את sdkmanager תחת cmdline-tools/latest.
+          # אם הרנר שמר אותו תחת שם גרסה, יוצרים קישור.
+          if [ ! -d "$ANDROID_SDK_ROOT/cmdline-tools/latest" ]; then
+            FIRST=$(ls -d "$ANDROID_SDK_ROOT"/cmdline-tools/*/ 2>/dev/null | head -1)
+            if [ -n "$FIRST" ]; then
+              ln -s "$FIRST" "$ANDROID_SDK_ROOT/cmdline-tools/latest"
+              echo "נוצר קישור latest אל $FIRST"
+            fi
+          fi
+          yes | "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null 2>&1 || true
+          echo "הרישיונות אושרו"
 
       - name: התקנת Bubblewrap
         run: npm install -g @bubblewrap/cli
@@ -45,8 +73,7 @@ jobs:
             "androidSdkPath": "$ANDROID_SDK_ROOT"
           }
           JSON
-          echo "JDK:  $JAVA_HOME"
-          echo "SDK:  $ANDROID_SDK_ROOT"
+          cat "$HOME/.bubblewrap/config.json"
 
       - name: שחזור מפתח החתימה
         env:
@@ -75,8 +102,13 @@ jobs:
             console.log("גרסה", m.appVersionName, "קוד", m.appVersionCode);
           '
 
-      - name: בניית פרויקט האנדרואיד
-        run: bubblewrap update --skipVersionUpgrade
+      - name: יצירת פרויקט האנדרואיד
+        run: |
+          # update מייצר את הפרויקט מתוך twa-manifest.json.
+          # הדגל משתנה בין גרסאות, לכן נסיון כפול.
+          bubblewrap update --skipVersionUpgrade || bubblewrap update
+          echo "--- קבצים שנוצרו ---"
+          ls -la
 
       - name: בנייה וחתימה
         env:
@@ -107,10 +139,15 @@ jobs:
       - name: איסוף התוצרים
         run: |
           mkdir -p out
-          cp app-release-signed.apk out/etz-tamari.apk 2>/dev/null || true
-          cp app-release-bundle.aab out/etz-tamari.aab 2>/dev/null || true
+          find . -name '*.apk' -not -path './out/*' -exec cp {} out/ \;
+          find . -name '*.aab' -not -path './out/*' -exec cp {} out/ \;
           cp assetlinks.json out/
+          echo "--- מה נארז ---"
           ls -la out
+          if ! ls out/*.apk >/dev/null 2>&1; then
+            echo "::error::לא נוצר קובץ APK"
+            exit 1
+          fi
 
       - name: העלאת החבילה
         uses: actions/upload-artifact@v4
@@ -118,3 +155,14 @@ jobs:
           name: etz-tamari-apk-${{ github.run_number }}
           path: out/
           retention-days: 90
+
+      # רץ גם כשהבנייה נכשלת — כדי שנוכל לראות מה קרה
+      - name: לוג אבחון
+        if: failure()
+        run: |
+          echo "=== תיקיית העבודה ==="
+          ls -la
+          echo "=== gradle ==="
+          cat build.gradle 2>/dev/null | head -40 || echo "אין build.gradle"
+          echo "=== config ==="
+          cat "$HOME/.bubblewrap/config.json" 2>/dev/null || true
