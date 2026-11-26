@@ -78,13 +78,39 @@ jobs:
       - name: שחזור מפתח החתימה
         env:
           KEYSTORE_B64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          STOREPASS: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
         run: |
           if [ -z "$KEYSTORE_B64" ]; then
             echo "::error::חסר הסוד ANDROID_KEYSTORE_BASE64. ראו את פרק האריזה ב-README."
             exit 1
           fi
-          echo "$KEYSTORE_B64" | base64 -d > android.keystore
-          echo "מפתח החתימה שוחזר"
+
+          # הסוד עלול להגיע עם שורות חדשות או רווחים מהדבקה — מנקים לפני הפענוח
+          printf '%s' "$KEYSTORE_B64" | tr -d '[:space:]' > ks.b64
+          echo "אורך הסוד אחרי ניקוי: $(wc -c < ks.b64) תווים"
+
+          if ! base64 -d ks.b64 > android.keystore 2>/dev/null; then
+            echo "::error::הסוד ANDROID_KEYSTORE_BASE64 אינו base64 תקין — ככל הנראה הודבק חלקית."
+            echo "::error::הדרך הבטוחה: gh secret set ANDROID_KEYSTORE_BASE64 -R ${{ github.repository }} < keystore.txt"
+            exit 1
+          fi
+          rm -f ks.b64
+
+          SIZE=$(wc -c < android.keystore)
+          echo "גודל המפתח: $SIZE בתים"
+          if [ "$SIZE" -lt 500 ]; then
+            echo "::error::המפתח ששוחזר קטן מדי — הסוד כנראה חסר."
+            exit 1
+          fi
+
+          # בדיקה אמיתית: האם זה מפתח שאפשר לפתוח עם הסיסמה שנשמרה
+          if ! keytool -list -keystore android.keystore -alias etztamari \
+                 -storepass "$STOREPASS" > /dev/null 2>&1; then
+            echo "::error::לא ניתן לפתוח את המפתח. בדקו שהסיסמה בסוד ANDROID_KEYSTORE_PASSWORD נכונה,"
+            echo "::error::ושהכינוי (alias) הוא etztamari."
+            exit 1
+          fi
+          echo "מפתח החתימה שוחזר ואומת"
 
       - name: קביעת מספר הגרסה
         env:
