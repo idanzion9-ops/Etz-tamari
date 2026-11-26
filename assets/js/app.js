@@ -484,14 +484,19 @@ const App = (() => {
     ).join('') || '<p class="muted" style="margin:0">השעות יתעדכנו בקרוב.</p>';
 
     const plans = o.plans || [];
+    const demo = typeof Demo !== 'undefined' && Demo.isOn();
     $('#open-plans').innerHTML = plans.length ? `
       <div class="eyebrow" style="margin-top:28px">מסלולים</div>
-      ${plans.map(pl => `<div class="card" style="padding:18px">
-        <div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start">
-          <div><div style="font-weight:600;font-size:17px">${esc(pl.name)}${pl.best ? ' <span class="chip chip--rust">הכי משתלם</span>' : ''}</div>
-            <div class="tiny muted">${esc(pl.desc || '')}</div></div>
+      ${plans.map(pl => `<div class="plan${pl.best ? ' best' : ''}">
+        <div class="plan-top">
+          <div><div class="plan-name">${esc(pl.name)}${pl.best ? ' <span class="chip chip--rust">הכי משתלם</span>' : ''}</div>
+            <div class="plan-desc">${esc(pl.desc || '')}</div></div>
           <span class="price">${money(pl.price)}</span>
-        </div></div>`).join('')}` : '';
+        </div>
+        ${demo ? `<button class="btn btn-sage btn-block btn-sm" style="margin-top:14px" data-buy="${esc(pl.name)}">בקשת רכישה</button>` : ''}
+      </div>`).join('')}` : '';
+    const soon = $('#open-soon');
+    if (soon) soon.hidden = demo;
   }
 
   /* ======================================================================
@@ -785,6 +790,10 @@ const App = (() => {
      איתחול
      ====================================================================== */
   function renderAll() {
+    const demoOn = typeof Demo !== 'undefined' && Demo.isOn();
+    const ribbon = $('#demo-ribbon');
+    if (ribbon) ribbon.hidden = !demoOn;
+    if (typeof Account !== 'undefined') Account.render();
     renderBrand();
     renderBadges();
     renderHome();
@@ -806,10 +815,15 @@ const App = (() => {
       toast('טעינת התוכן נכשלה. רעננו את הדף.');
       return;
     }
+    if (typeof Demo !== 'undefined') {
+      Demo.load();
+      Demo.onChange(() => renderAll());
+    }
     Store.onChange(() => { renderBadges(); });
     renderAll();
     wire();
     Admin.init(renderAll);
+    if (typeof Account !== 'undefined') Account.init(renderAll);
   }
 
   return { boot, renderAll, cardItem };

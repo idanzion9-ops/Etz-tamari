@@ -1044,3 +1044,97 @@ html[data-a11y-contrast="1"] .tiles-frame { background: #fff; background-image: 
   min-width: 17px; height: 17px; font-size: 10px;
   border-width: 2px;
 }
+
+/* ==========================================================================
+   קריאוּת האייקונים על הסרגל הירוק
+   אמוג׳י בהיר על ירוק נבלע. הילה לבנה סביבו מחזירה אותו.
+   ========================================================================== */
+
+.tab .ico {
+  filter:
+    drop-shadow(0  1px 0 rgba(255,255,255,.95))
+    drop-shadow(0 -1px 0 rgba(255,255,255,.95))
+    drop-shadow( 1px 0 0 rgba(255,255,255,.95))
+    drop-shadow(-1px 0 0 rgba(255,255,255,.95))
+    drop-shadow(0 2px 4px rgba(33,36,31,.25));
+}
+.tab { text-shadow: 0 1px 2px rgba(33,36,31,.22); }
+.tab[aria-selected="true"] .ico { transform: translateY(-1px); }
+
+/* כרטיסיות הגריד על רקע בהיר — בלי הילה, היא רק תלכלך */
+.tile .ico { filter: none; }
+
+html[data-a11y-contrast="1"] .tab .ico { filter: none; }
+html[data-a11y-contrast="1"] .tab { text-shadow: none; }
+
+/* ==========================================================================
+   סביבת ההדגמה
+   ========================================================================== */
+
+.demo-ribbon {
+  background: #3E4A8C; color: #fff;
+  font-family: var(--util); font-size: 12px; font-weight: 600; letter-spacing: .04em;
+  text-align: center; padding: 7px 12px;
+}
+
+.acct {
+  background: var(--paper); border: 1px solid var(--line);
+  border-radius: var(--r-lg); padding: 20px; box-shadow: var(--shadow);
+}
+.acct-head { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+.acct-avatar {
+  width: 52px; height: 52px; border-radius: 50%; flex-shrink: 0;
+  background: var(--sage-wash); border: 1px solid var(--sage);
+  display: grid; place-items: center;
+  font-family: var(--display); font-size: 21px; font-weight: 700; color: var(--sage-deep);
+}
+.acct-name { font-weight: 700; font-size: 18px; }
+.acct-mail { font-size: 13px; color: var(--pencil); }
+
+.meter {
+  display: flex; align-items: baseline; gap: 8px;
+  margin: 4px 0 10px;
+}
+.meter b { font-family: var(--display); font-size: 36px; line-height: 1; }
+.meter span { font-size: 14px; color: var(--pencil); }
+
+.alert {
+  display: flex; gap: 10px; align-items: flex-start;
+  border-radius: var(--r); padding: 12px 14px; margin-bottom: 9px;
+  font-size: 14.5px; line-height: 1.45;
+}
+.alert.warn { background: #FBF2DD; color: #7A5A12; border: 1px solid #EFDFB8; }
+.alert.stop { background: #F9E9E7; color: #8C3A33; border: 1px solid #EFCFCB; }
+.alert.ok   { background: var(--sage-wash); color: var(--sage-deep); border: 1px solid #CFE0D5; }
+
+.qr-wrap { text-align: center; padding: 10px 0 4px; }
+.qr-wrap svg {
+  border: 1px solid var(--line); border-radius: var(--r);
+  padding: 10px; background: #fff;
+}
+
+.sig-pad {
+  width: 100%; height: 170px;
+  border: 2px dashed var(--line); border-radius: var(--r);
+  background: #fff; touch-action: none; display: block;
+}
+.sig-row { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; }
+
+.plan {
+  background: var(--paper); border: 1px solid var(--line);
+  border-radius: var(--r-lg); padding: 18px; margin-bottom: 12px;
+  transition: border-color .2s;
+}
+.plan.best { border-color: var(--rust); border-width: 2px; }
+.plan-top { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; }
+.plan-name { font-weight: 600; font-size: 17px; }
+.plan-desc { font-size: 13.5px; color: var(--pencil); margin-top: 2px; }
+
+.user-row {
+  background: var(--paper); border: 1px solid var(--line);
+  border-radius: var(--r); padding: 13px 14px; margin-bottom: 9px;
+}
+.user-row .top { display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; }
+.user-row .nm { font-weight: 600; }
+.user-row .sub { font-size: 12.5px; color: var(--pencil); }
+.user-row .acts { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }

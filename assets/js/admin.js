@@ -44,6 +44,8 @@ const Admin = (() => {
      מסגרת
      ====================================================================== */
   const SECTIONS = [
+    { k: 'demo',      i: '🧪', t: 'סביבת הדגמה' },
+    { k: 'members',   i: '🎟️', t: 'מנויים וכרטיסיות' },
     { k: 'registrations', i: '📥', t: 'הרשמות' },
     { k: 'calendar',  i: '📅', t: 'יומן ומועדים' },
     { k: 'workshops', i: '🪵', t: 'סדנאות' },
@@ -307,6 +309,94 @@ const Admin = (() => {
         </div>
         ${Store.content.updatedAt ? `<p class="hint" style="text-align:center;margin-top:16px">שינוי אחרון נשמר: ${new Date(Store.content.updatedAt).toLocaleString('he-IL')}</p>` : ''}
         <p class="hint" style="text-align:center">שינויים נשמרים על המכשיר הזה. כדי שיופיעו לכולם — ״פרסום וגיבוי״.</p>`;
+    },
+
+    demo() {
+      const on = Demo.isOn();
+      const d = Demo.db;
+      return `<div class="card">
+          <h3 style="font-size:20px;margin-bottom:8px">מה זה</h3>
+          <p class="lead" style="font-size:15px">סביבה להתנסות בזרימה המלאה לפני חיבור מסד נתונים אמיתי: משתמש נרשם, חותם על טופס בטיחות, מבקש כרטיסייה, אתם מאשרים, ואז מנקבים כניסות.</p>
+          <p class="hint">הכול נשמר על המכשיר הזה בלבד. לא נכנס לקובץ הפרסום ולא עולה לאינטרנט.</p>
+          <div class="switchrow">
+            <label for="demo-on" style="margin:0;font-size:16px">סביבת ההדגמה פעילה</label>
+            <input type="checkbox" id="demo-on" style="width:auto" ${on ? 'checked' : ''}>
+          </div>
+        </div>
+
+        <div class="stat-strip">
+          <div class="stat"><b>${d.users.length}</b><span>משתמשים</span></div>
+          <div class="stat"><b>${d.cards.filter(c => c.kind !== 'insurance').length}</b><span>כרטיסיות</span></div>
+          <div class="stat"><b>${d.visits.length}</b><span>ביקורים</span></div>
+        </div>
+
+        <div class="card">
+          <h3 style="font-size:19px;margin-bottom:8px">משתמשים לדוגמה</h3>
+          <p class="lead" style="font-size:15px">יוצר חמישה משתמשים במצבים שונים — אחד בלי חתימה, אחת עם כניסה אחרונה, אחד קטין עם הורה חותם, וביטוח שעומד לפוג. ככה רואים את כל ההתראות.</p>
+          <button class="btn btn-sage btn-block" data-demo="seed">יצירת משתמשים לדוגמה</button>
+        </div>
+
+        <div class="card">
+          <h3 style="font-size:19px;margin-bottom:8px">איפוס</h3>
+          <p class="lead" style="font-size:15px">מוחק את כל משתמשי ההדגמה, הכרטיסיות והביקורים. התוכן של האפליקציה לא נוגע.</p>
+          <button class="btn btn-danger btn-block" data-demo="reset">מחיקת נתוני ההדגמה</button>
+        </div>`;
+    },
+
+    members() {
+      if (!Demo.isOn()) {
+        return `<div class="empty"><div class="em">🧪</div>
+          <p>סביבת ההדגמה כבויה.</p>
+          <button class="btn btn-quiet btn-sm" data-adm="demo">להפעלה</button></div>`;
+      }
+
+      const pend = Demo.pendingPurchases();
+      const us = Demo.users();
+
+      const pendHtml = pend.length ? `
+        <div class="eyebrow">בקשות רכישה ממתינות</div>
+        ${pend.map(p => {
+          const u = Demo.findUser(p.userId);
+          return `<div class="user-row" style="border-color:var(--warn)">
+            <div class="top">
+              <div><div class="nm">${esc(u ? u.name : '—')}</div>
+                <div class="sub">${esc(p.planName)} · ${money(p.price)}</div></div>
+              <span class="chip chip--warn">ממתין</span>
+            </div>
+            <div class="acts">
+              <button class="mini mini--go" data-demo="approve" data-id="${esc(p.id)}">אישור והפעלה</button>
+              <button class="mini mini--stop" data-demo="decline" data-id="${esc(p.id)}">דחייה</button>
+            </div></div>`;
+        }).join('')}
+        <div class="eyebrow" style="margin-top:26px">כל המשתמשים</div>` : '';
+
+      const list = us.length ? us.map(u => {
+        const card = Demo.activeCard(u.id);
+        const left = Demo.entriesLeft(u.id);
+        const alerts = Demo.alertsFor(u.id);
+        const unl = card && card.kind === 'unlimited';
+        return `<div class="user-row">
+          <div class="top">
+            <div style="min-width:0">
+              <div class="nm">${esc(u.name)}${u.isMinor ? ' <span class="chip chip--flat">קטין</span>' : ''}</div>
+              <div class="sub">${esc(u.email)}${u.phone ? ' · ' + esc(u.phone) : ''}</div>
+              <div class="sub">${card ? esc(card.name) + (unl ? '' : ` · נותרו ${left}`) : 'אין כרטיסייה'}</div>
+            </div>
+            <div style="text-align:center;flex-shrink:0">
+              <div class="num" style="font-size:22px">${unl ? '∞' : left}</div>
+              <div class="sub">כניסות</div>
+            </div>
+          </div>
+          ${alerts.map(a => `<div class="alert ${a.level}" style="margin:10px 0 0;font-size:13px;padding:8px 10px">${esc(a.text)}</div>`).join('')}
+          <div class="acts">
+            <button class="mini mini--go" data-demo="punch" data-id="${esc(u.id)}">ניקוב כניסה</button>
+            <button class="mini" data-demo="card" data-id="${esc(u.id)}">כרטיס לקוח</button>
+            <button class="mini mini--stop" data-demo="del-user" data-id="${esc(u.id)}">מחיקה</button>
+          </div></div>`;
+      }).join('') : `<div class="empty"><div class="em">🎟️</div><p>אין עדיין משתמשים.</p>
+          <button class="btn btn-quiet btn-sm" data-adm="demo">ליצירת משתמשים לדוגמה</button></div>`;
+
+      return pendHtml + list;
     },
 
     registrations() {
@@ -597,7 +687,8 @@ const Admin = (() => {
       const del = t.closest('[data-del]');
       if (del) {
         if (!confirm('למחוק? הפעולה לא ניתנת לביטול.')) return;
-        Store.remove(del.dataset.del, del.dataset.id);
+        try { Store.remove(del.dataset.del, del.dataset.id); }
+        catch (err) { return toast(err.message); }
         refreshPublic(); toast('נמחק'); return render();
       }
 
@@ -610,7 +701,8 @@ const Admin = (() => {
         ['price', 'capacity', 'sessions', 'qty', 'amount', 'stock', 'taken', 'people', 'total'].forEach(k => {
           if (data[k] !== undefined && data[k] !== '') data[k] = Number(data[k]);
         });
-        Store.upsert(coll, data);
+        try { Store.upsert(coll, data); }
+        catch (err) { return toast(err.message); }
         refreshPublic(); toast('נשמר'); view = { events: 'calendar', participants: 'people' }[coll] || coll;
         return render();
       }
@@ -632,6 +724,9 @@ const Admin = (() => {
         refreshPublic(); toast('נקלט לרשימה'); return render();
       }
 
+      const dm = t.closest('[data-demo]');
+      if (dm) return demoAction(dm.dataset.demo, dm.dataset.id);
+
       const act = t.closest('[data-adm-act]');
       if (act) {
         const a = act.dataset.admAct;
@@ -645,17 +740,44 @@ const Admin = (() => {
       }
     });
 
-    // תמונות
+    // תמונות — עם חיווי, נעילת השמירה בזמן העיבוד, וכישלון קולני
     document.addEventListener('change', async e => {
+      if (e.target.id === 'demo-on') {
+        Demo.setOn(e.target.checked);
+        refreshPublic(); render();
+        return toast(e.target.checked ? 'סביבת ההדגמה פעילה' : 'סביבת ההדגמה כובתה');
+      }
+
       const img = e.target.closest('[data-img]');
       if (img) {
+        const key = img.dataset.img;
+        const prev = $(`#prev_${key}`);
+        const saveBtns = $$('#sheet-foot [data-save], #sheet-body [data-save-mem], #sheet-body [data-save-site]');
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
+
+        if (prev) prev.innerHTML = '<span class="hint">מעבד את התמונה…</span>';
+        saveBtns.forEach(b => { b.disabled = true; });
+
         try {
-          const url = await readImage(e.target.files[0]);
-          $(`#prev_${img.dataset.img}`).innerHTML = `<img src="${url}" alt="" style="height:88px;border-radius:var(--r-sm);border:1px solid var(--line)">`;
-          $(`input[type=hidden][data-f="${img.dataset.img}"]`).value = url;
-        } catch (err) { toast(err.message); }
+          const url = await readImage(file);
+          const hidden = $(`input[type=hidden][data-f="${key}"]`);
+          if (!hidden) throw new Error('שדה התמונה לא נמצא — סגרו ופתחו מחדש');
+          hidden.value = url;
+          const kb = Math.round(url.length * 0.75 / 1024);
+          if (prev) prev.innerHTML =
+            `<img src="${url}" alt="" style="height:88px;border-radius:var(--r-sm);border:1px solid var(--line)">
+             <div class="hint">מוכן · ${kb}KB</div>`;
+        } catch (err) {
+          if (prev) prev.innerHTML = `<div class="hint" style="color:var(--stop)">${esc(err.message)}</div>`;
+          toast(err.message);
+        } finally {
+          saveBtns.forEach(b => { b.disabled = false; });
+          e.target.value = '';   // מאפשר לבחור שוב את אותו קובץ
+        }
         return;
       }
+
       if (e.target.id === 'restore-file') {
         const file = e.target.files[0];
         if (!file) return;
@@ -667,25 +789,90 @@ const Admin = (() => {
     });
   }
 
+  /* ---------- פעולות סביבת ההדגמה ---------- */
+
+  function demoAction(what, id) {
+    try {
+      if (what === 'seed')  { Demo.seed(); toast('נוצרו משתמשים לדוגמה'); }
+      if (what === 'reset') {
+        if (!confirm('למחוק את כל נתוני ההדגמה?')) return;
+        Demo.reset(); toast('נמחק');
+      }
+      if (what === 'approve') {
+        const c = Demo.approvePurchase(id);
+        toast(c ? 'הכרטיסייה הופעלה' : 'הבקשה כבר טופלה');
+      }
+      if (what === 'decline') { Demo.declinePurchase(id); toast('נדחה'); }
+      if (what === 'punch')   {
+        const r = Demo.punch(id);
+        toast(r.msg);
+        if (!r.ok) return render();
+      }
+      if (what === 'del-user') {
+        if (!confirm('למחוק את המשתמש ואת כל הנתונים שלו?')) return;
+        const d = Demo.db;
+        d.users    = d.users.filter(u => u.id !== id);
+        d.cards    = d.cards.filter(c => c.userId !== id);
+        d.visits   = d.visits.filter(v => v.userId !== id);
+        d.purchases = d.purchases.filter(p => p.userId !== id);
+        Demo.save(); toast('נמחק');
+      }
+      if (what === 'card') return customerCard(id);
+    } catch (e) { return toast(e.message); }
+    refreshPublic();
+    render();
+  }
+
+  function customerCard(id) {
+    const u = Demo.findUser(id);
+    if (!u) return;
+    const cards = Demo.cardsOf(id);
+    const visits = Demo.visitsOf(id);
+    sheetBody(`<button class="mini" data-adm="members" style="margin-bottom:16px">→ חזרה</button>
+      <h3 style="font-size:22px;margin-bottom:4px">${esc(u.name)}</h3>
+      <p class="hint" style="margin-top:0">${esc(u.email)}${u.phone ? ' · ' + esc(u.phone) : ''}</p>
+
+      ${u.isMinor ? `<div class="alert warn" style="margin-top:12px"><span>👤</span><span>קטין. אחראי: ${esc(u.guardianName || '—')}</span></div>` : ''}
+
+      <div class="eyebrow" style="margin-top:22px">טופס בטיחות</div>
+      ${u.safetySignedAt
+        ? `<div class="switchrow"><span class="lbl" style="margin:0">נחתם</span><span>${esc(dateHe(u.safetySignedAt.slice(0,10)))} · ${esc(u.safetySignedBy || u.name)}</span></div>
+           ${u.safetySignature ? `<img src="${esc(u.safetySignature)}" alt="חתימה" style="width:100%;max-width:280px;border:1px solid var(--line);border-radius:var(--r-sm);background:#fff;margin-top:10px">` : ''}`
+        : '<div class="alert stop"><span>⚠️</span><span>לא נחתם</span></div>'}
+
+      <div class="eyebrow" style="margin-top:24px">כרטיסיות</div>
+      ${cards.length ? cards.map(c => `<div class="switchrow">
+          <span>${esc(c.name)}</span>
+          <span class="num">${c.kind === 'punch' ? `${c.total - c.used}/${c.total}` : 'עד ' + esc(dateHe(c.validUntil))}</span>
+        </div>`).join('') : '<p class="muted" style="margin:0">אין</p>'}
+
+      <div class="eyebrow" style="margin-top:24px">ביקורים אחרונים</div>
+      ${visits.length ? visits.slice(0, 12).map(v => `<div class="switchrow">
+          <span class="num">${esc(dateHe(v.at.slice(0,10)))}</span>
+          <span class="muted">${esc(new Date(v.at).toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' }))}</span>
+        </div>`).join('') : '<p class="muted" style="margin:0">אין</p>'}`);
+    sheetFoot(`<button class="btn btn-primary btn-block" data-demo="punch" data-id="${esc(u.id)}">ניקוב כניסה</button>`);
+  }
+
   function saveSite() {
-    const s = Store.site();
+    const site = Store.site();
     const d = collect($('#sheet-body'));
-    Object.assign(s, {
+    Object.assign(site, {
       name: d.name, tagline: d.tagline, heroEmoji: d.heroEmoji,
       heroTitle: d.heroTitle, heroText: d.heroText,
       aboutTitle: d.aboutTitle, aboutHtml: d.aboutHtml, aboutImage: d.aboutImage,
       projectsIntro: d.projectsIntro,
       momentsIntro: d.momentsIntro,
-      pin: d.pin || s.pin,
+      pin: d.pin || site.pin,
       bookingSlots: String(d.slots || '').split(',').map(x => x.trim()).filter(Boolean),
       contact: {
         phone: d.c_phone, whatsapp: d.c_whatsapp, email: d.c_email,
         address: d.c_address, instagram: d.c_instagram, facebook: d.c_facebook
       }
     });
-    $$('[data-stat]').forEach(el => { s.stats[el.dataset.i][el.dataset.stat] = el.value; });
-    $$('[data-hour]').forEach(el => { s.hours[el.dataset.i][el.dataset.hour] = el.value; });
-    Store.saveContent();
+    $$('[data-hour]').forEach(el => { site.hours[el.dataset.i][el.dataset.hour] = el.value; });
+    try { Store.saveContent(); }
+    catch (err) { return toast(err.message); }
     refreshPublic();
     toast('התוכן נשמר. לפרסום לכולם — ״פרסום וגיבוי״.');
   }
@@ -702,7 +889,8 @@ const Admin = (() => {
       familyNames: String(d.mem_names || '').split(',').map(x => x.trim()).filter(Boolean),
       familyOutro: d.mem_fout
     };
-    Store.saveContent();
+    try { Store.saveContent(); }
+    catch (err) { return toast(err.message); }
     refreshPublic();
     toast('נשמר');
   }
@@ -718,7 +906,8 @@ const Admin = (() => {
       const pl = o.plans[el.dataset.i], k = el.dataset.owp;
       pl[k] = k === 'best' ? el.checked : (k === 'price' ? Number(el.value) : el.value);
     });
-    Store.saveContent();
+    try { Store.saveContent(); }
+    catch (err) { return toast(err.message); }
     refreshPublic();
     toast('נשמר. לפרסום לכולם — ״פרסום וגיבוי״.');
   }

@@ -114,8 +114,13 @@ const Store = (() => {
 
   function saveContent() {
     content.updatedAt = new Date().toISOString();
-    writeJSON(CONTENT_KEY, content);
+    const ok = writeJSON(CONTENT_KEY, content);
     listeners.forEach(fn => { try { fn(); } catch (e) { console.warn(e); } });
+    if (!ok) {
+      // האחסון מלא — כמעט תמיד בגלל תמונות. עדיף להגיד מאשר לשקר.
+      throw new Error('האחסון במכשיר מלא. מחקו כמה תמונות מהגלריה, או ייצאו גיבוי ואפסו.');
+    }
+    return true;
   }
 
   function saveLocal() {
