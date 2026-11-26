@@ -956,3 +956,91 @@ html[data-a11y-motion="1"] *::after {
   font-style: italic;
 }
 .tile.t-mem { background: #F3EFE9; border-color: #E3DAD0; }
+
+/* ==========================================================================
+   התאמה למראה האתר בנטליפיי
+   סרגלים ירוקים, מסגרת מרקם סביב הכרטיסיות, ניווט בן חמישה פריטים.
+   ========================================================================== */
+
+:root {
+  --bar: #8FA893;        /* ירוק מרווה לסרגלים */
+  --bar-deep: #7A9680;
+  --on-bar: #FFFFFF;
+}
+
+/* --- סרגל עליון --- */
+.topbar {
+  background: var(--bar);
+  border-bottom: 1px solid var(--bar-deep);
+  backdrop-filter: none;
+}
+.topbar .wordmark .name { color: var(--on-bar); }
+.topbar .wordmark .sub  { color: rgba(255,255,255,.82); }
+.topbar .wordmark img.mark {
+  border-color: rgba(255,255,255,.65);
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(33,36,31,.14);
+}
+.topbar .icon-btn {
+  background: rgba(255,255,255,.92);
+  border-color: rgba(255,255,255,.5);
+  color: var(--ink);
+}
+.topbar .icon-btn:hover { background: #fff; border-color: #fff; }
+.topbar .badge { border-color: var(--bar); }
+
+/* הסרגל המשונן מתחת לכותרת מיותר כשיש פס ירוק */
+.topbar + .rule { display: none; }
+
+/* --- ניווט תחתון --- */
+.tabbar {
+  background: var(--bar);
+  border-top: 1px solid var(--bar-deep);
+  backdrop-filter: none;
+}
+.tab { color: rgba(255,255,255,.78); }
+.tab[aria-selected="true"] { color: var(--on-bar); }
+.tab[aria-selected="true"]::before { background: #fff; inset-inline: 22%; }
+.tab .ico { font-size: 19px; }
+.tab { font-size: 10.5px; }
+.tab .badge {
+  position: absolute; top: 6px; inset-inline-start: 50%; margin-inline-start: 2px;
+  border-color: var(--bar);
+}
+
+/* --- מסגרת המרקם סביב הכרטיסיות --- */
+.tiles-frame {
+  background: var(--paper);
+  background-image:
+    repeating-linear-gradient(45deg,  rgba(33,36,31,.012) 0 2px, transparent 2px 5px),
+    repeating-linear-gradient(-45deg, rgba(33,36,31,.012) 0 2px, transparent 2px 5px);
+  border: 1px solid var(--line);
+  border-radius: 26px;
+  padding: 16px;
+  box-shadow: 0 2px 10px rgba(33,36,31,.04);
+}
+
+/* הכרטיסיות בתוך המסגרת — קצת פחות גבול, הן כבר ממוסגרות */
+.tiles-frame .tile { box-shadow: none; }
+.tiles-frame .tile:hover { box-shadow: var(--shadow); }
+
+/* --- ניגודיות גבוהה: הסרגלים חוזרים לשחור־לבן --- */
+html[data-a11y-contrast="1"] .topbar,
+html[data-a11y-contrast="1"] .tabbar { background: #000; border-color: #000; }
+html[data-a11y-contrast="1"] .tab,
+html[data-a11y-contrast="1"] .topbar .wordmark .name,
+html[data-a11y-contrast="1"] .topbar .wordmark .sub { color: #fff; }
+html[data-a11y-contrast="1"] .tiles-frame { background: #fff; background-image: none; border-width: 2px; }
+
+/* תיקון: display:grid גובר על תכונת hidden, אז התגים הריקים נשארו על המסך */
+.badge[hidden] { display: none !important; }
+
+/* מיקום התג על לשונית בניווט */
+.tab { position: relative; }
+.tab .badge {
+  top: 4px;
+  inset-inline-start: auto;
+  inset-inline-end: calc(50% - 22px);
+  min-width: 17px; height: 17px; font-size: 10px;
+  border-width: 2px;
+}

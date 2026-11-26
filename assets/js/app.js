@@ -31,10 +31,14 @@ const App = (() => {
   }
 
   function renderBadges() {
-    const cc = Store.cartCount();
-    const cb = $('#badge-cart'); cb.textContent = cc; cb.hidden = cc === 0;
-    const fc = Store.local.favs.length;
-    const fb = $('#badge-favs'); fb.textContent = fc; fb.hidden = fc === 0;
+    const set = (id, n) => {
+      const el = $(id);
+      if (!el) return;
+      el.textContent = n;
+      el.hidden = n === 0;
+    };
+    set('#badge-cart-tab', Store.cartCount());
+    set('#badge-favs-tab', Store.local.favs.length);
   }
 
   /* ======================================================================
@@ -745,8 +749,8 @@ const App = (() => {
       }
 
       if (t.closest('#cart-send')) return sendOrder();
-      if (t.closest('#btn-cart')) return openCart();
-      if (t.closest('#btn-favs')) return openFavs();
+      if (t.closest('#tab-cart')) return openCart();
+      if (t.closest('#tab-favs')) return openFavs();
 
       if (t.closest('#me-save')) {
         Store.local.me = { name: $('#me-name').value.trim(), phone: $('#me-phone').value.trim(), email: $('#me-email').value.trim() };

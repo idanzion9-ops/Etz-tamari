@@ -45,8 +45,7 @@
       </span>
     </button>
     <div class="topbar-actions">
-      <button class="icon-btn" id="btn-favs" aria-label="מועדפים">♡<span class="badge" id="badge-favs" hidden>0</span></button>
-      <button class="icon-btn" id="btn-cart" aria-label="עגלת קניות">🛒<span class="badge" id="badge-cart" hidden>0</span></button>
+      <button class="icon-btn" id="btn-me" aria-label="האזור שלי" data-go="me">👤</button>
     </div>
   </div>
 </header>
@@ -61,7 +60,9 @@
       <p id="hero-text"></p>
     </div>
 
-    <nav class="tiles" id="home-tiles" aria-label="מדורי האפליקציה"></nav>
+    <div class="tiles-frame">
+      <nav class="tiles" id="home-tiles" aria-label="מדורי האפליקציה"></nav>
+    </div>
 
     <section class="section">
       <div class="eyebrow">קרוב בזמן</div>
@@ -205,8 +206,9 @@
 <nav class="tabbar" role="tablist" aria-label="ניווט ראשי">
   <button class="tab" role="tab" aria-selected="true"  data-go="home"><span class="ico">🏠</span>בית</button>
   <button class="tab" role="tab" aria-selected="false" data-go="open"><span class="ico">🪚</span>הסדנה</button>
-  <button class="tab" role="tab" aria-selected="false" data-go="shop"><span class="ico">🛒</span>חנות</button>
-  <button class="tab" role="tab" aria-selected="false" data-go="me"><span class="ico">👤</span>שלי</button>
+  <button class="tab" role="tab" aria-selected="false" data-go="shop"><span class="ico">🛍️</span>חנות</button>
+  <button class="tab" id="tab-cart" aria-label="עגלת קניות"><span class="ico">🛒</span>עגלה<span class="badge" id="badge-cart-tab" hidden>0</span></button>
+  <button class="tab" id="tab-favs" aria-label="מועדפים"><span class="ico">♡</span>מועדפים<span class="badge" id="badge-favs-tab" hidden>0</span></button>
 </nav>
 
 <!-- ===================== מגירה כללית ===================== -->

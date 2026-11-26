@@ -112,7 +112,7 @@ const UI = (() => {
   /* ---------- ניווט בין מסכים ---------- */
   function go(name) {
     $$('.screen').forEach(s => s.classList.toggle('on', s.id === 'screen-' + name));
-    $$('.tab').forEach(t => t.setAttribute('aria-selected', String(t.dataset.go === name)));
+    $$('.tab[data-go]').forEach(t => t.setAttribute('aria-selected', String(t.dataset.go === name)));
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
