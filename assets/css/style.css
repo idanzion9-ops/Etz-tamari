@@ -1139,3 +1139,52 @@ html[data-a11y-contrast="1"] .tab { text-shadow: none; }
 .user-row .nm { font-weight: 600; }
 .user-row .sub { font-size: 12.5px; color: var(--pencil); }
 .user-row .acts { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+
+
+/* ==========================================================================
+   איורי השלבים בפרויקטונים
+   ========================================================================== */
+
+.step { align-items: flex-start; }
+
+.step-il {
+  flex-shrink: 0;
+  width: 78px;
+  border-radius: 10px;
+  background: #FBF8F1;
+  border: 1px solid var(--line-soft);
+  padding: 4px;
+  align-self: flex-start;
+}
+.step-il svg { width: 100%; height: auto; display: block; }
+.step.done .step-il { opacity: .5; }
+
+@media (max-width: 400px) { .step-il { width: 66px; } }
+
+/* במצב ניגודיות גבוהה האיור מאבד משמעות — משאירים אותו, רק בלי הרקע */
+html[data-a11y-contrast="1"] .step-il { background: #fff; border-color: #000; }
+
+/* לוח האיורים בניהול */
+.il-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.il-pick {
+  border: 1px solid var(--line); border-radius: var(--r-sm);
+  background: var(--paper); padding: 6px 4px 7px; text-align: center;
+  display: flex; flex-direction: column; gap: 4px; align-items: center;
+  transition: .18s;
+}
+.il-pick:hover { border-color: var(--sage); background: var(--sage-wash); }
+.il-pick[aria-pressed="true"] { border-color: var(--ink); border-width: 2px; background: var(--sage-wash); }
+.il-pick svg { width: 100%; height: auto; }
+.il-pick span { font-family: var(--util); font-size: 10.5px; color: var(--bark); line-height: 1.2; }
+
+.step-il { position: relative; }
+.step-il .step-no {
+  position: absolute; top: -5px; inset-inline-start: -5px;
+  min-width: 19px; height: 19px; padding: 0 4px;
+  border-radius: 10px;
+  background: var(--paper); border: 1px solid var(--line);
+  color: var(--pencil);
+  font-family: var(--util); font-size: 11px; font-weight: 700; font-style: normal;
+  display: grid; place-items: center;
+}
+.step.done .step-il .step-no { background: var(--sage-deep); border-color: var(--sage-deep); color: #fff; }

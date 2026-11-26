@@ -372,14 +372,19 @@ const App = (() => {
       <ul class="pj-spec">${(p.tools || []).map(m => `<li>${esc(m)}</li>`).join('')}</ul>
 
       <div class="eyebrow" style="margin-top:26px">שלב אחר שלב</div>
-      ${(p.steps || []).map((st, i) => `<button class="step${done.has(i) ? ' done' : ''}" data-step="${i}">
+      ${(p.steps || []).map((st, i) => {
+        const il = (typeof Illus !== 'undefined') ? Illus.forStep(st) : '';
+        return `<button class="step${done.has(i) ? ' done' : ''}" data-step="${i}">
         <span class="step-box">✓</span>
-        <span class="step-n">${String(i + 1).padStart(2, '0')}</span>
+        ${il
+          ? `<span class="step-il"><i class="step-no">${i + 1}</i>${il}</span>`
+          : `<span class="step-n">${String(i + 1).padStart(2, '0')}</span>`}
         <span class="step-main">
           <span class="step-t">${esc(st.t)}</span>
           <span class="step-d">${esc(st.d)}</span>
         </span>
-      </button>`).join('')}
+      </button>`;
+      }).join('')}
 
       ${p.tip ? `<div class="pj-tip"><span class="em">💡</span><span>${esc(p.tip)}</span></div>` : ''}`;
   }

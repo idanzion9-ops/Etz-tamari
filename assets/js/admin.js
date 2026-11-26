@@ -113,6 +113,20 @@ const Admin = (() => {
     }).join('');
   }
 
+  /** מוסיף מקרא איורים מתחת לטופס הפרויקטון, להעתקה לשורת השלב */
+  function appendIllusKey() {
+    const box = document.createElement('div');
+    box.innerHTML = `
+      <div class="eyebrow" style="margin-top:22px">איורי השלבים</div>
+      <p class="hint" style="margin-top:0">כל שלב נכתב <code>כותרת | פירוט</code>. להוספת איור מסוים — מוסיפים קו נוסף ואת שם האיור:
+        <code>מנסרים | לאורך הקו | saw</code>. בלי זה האיור נבחר אוטומטית לפי הטקסט.</p>
+      <div class="il-grid">
+        ${Illus.keys().map(k => `<div class="il-pick">${Illus.byKey(k)}
+          <span>${esc(Illus.LABELS[k])}</span><code style="font-size:10px">${k}</code></div>`).join('')}
+      </div>`;
+    $('#sheet-body').appendChild(box);
+  }
+
   function collect(scope = document) {
     // מקלדות מובייל מחזיקות את הערך עד לאיבוד המיקוד. מסיימים קודם.
     try { document.activeElement && document.activeElement.blur(); } catch (e) {}
@@ -131,7 +145,7 @@ const Admin = (() => {
       ...x,
       materials: (x.materials || []).join('\n'),
       tools: (x.tools || []).join('\n'),
-      steps: (x.steps || []).map(st => `${st.t} | ${st.d}`).join('\n')
+      steps: (x.steps || []).map(st => `${st.t} | ${st.d}${st.il ? ' | ' + st.il : ''}`).join('\n')
     };
   }
 
@@ -142,10 +156,12 @@ const Admin = (() => {
       materials: lines(d.materials),
       tools: lines(d.tools),
       steps: lines(d.steps).map(line => {
-        const i = line.indexOf('|');
-        return i > -1
-          ? { t: line.slice(0, i).trim(), d: line.slice(i + 1).trim() }
-          : { t: line, d: '' };
+        // כותרת | פירוט | איור   — החלק השלישי אינו חובה
+        const parts = line.split('|').map(x => x.trim());
+        const st = { t: parts[0] || '', d: parts[1] || '' };
+        const key = parts[2];
+        if (key && Illus.keys().includes(key)) st.il = key;
+        return st;
       })
     };
   }
@@ -214,7 +230,7 @@ const Admin = (() => {
       { k: 'time', t: 'זמן עבודה משוער', ph: 'שעה וחצי' },
       { k: 'materials', type: 'area', t: 'חומרים — שורה לכל פריט' },
       { k: 'tools', type: 'area', t: 'כלים — שורה לכל כלי' },
-      { k: 'steps', type: 'area', t: 'שלבים — שורה לכל שלב, בפורמט: כותרת | פירוט' },
+      { k: 'steps', type: 'area', t: 'שלבים — כותרת | פירוט | איור' },
       { k: 'tip', type: 'area', t: 'טיפ לסיום' }
     ],
     moments: [
@@ -681,14 +697,19 @@ const Admin = (() => {
       if (add) {
         const coll = add.dataset.new;
         const blank = coll === 'projects' ? { emoji: '🪚', level: 'קל' } : { active: true, date: todayISO() };
-        return editor(coll, FIELDS[coll], blank, TITLES[coll][1]);
+        const r = editor(coll, FIELDS[coll], blank, TITLES[coll][1]);
+        if (coll === 'projects') appendIllusKey();
+        return r;
       }
 
       const ed = t.closest('[data-edit]');
       if (ed) {
         const coll = ed.dataset.edit;
         const rec = Store.find(coll, ed.dataset.id);
-        return editor(coll, FIELDS[coll], coll === 'projects' ? pjToForm(rec) : rec, 'עריכת ' + TITLES[coll][0]);
+        const form = coll === 'projects' ? pjToForm(rec) : rec;
+        const r = editor(coll, FIELDS[coll], form, 'עריכת ' + TITLES[coll][0]);
+        if (coll === 'projects') appendIllusKey();
+        return r;
       }
 
       const del = t.closest('[data-del]');
