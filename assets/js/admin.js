@@ -77,9 +77,13 @@ const Admin = (() => {
     const back = view === 'dash' ? '' :
       `<button class="mini" data-adm="dash" style="margin-bottom:16px">→ חזרה לתפריט</button>`;
     sheetBody(back + (VIEWS[view] || VIEWS.dash)());
-    sheetFoot(view === 'dash'
-      ? `<button class="btn btn-quiet btn-block btn-sm" data-adm="lock">נעילת מרכז הניהול</button>`
-      : '');
+    const FOOT = {
+      dash:     `<button class="btn btn-quiet btn-block btn-sm" data-adm="lock">נעילת מרכז הניהול</button>`,
+      openws:   `<button class="btn btn-primary btn-block" data-save-ow="1">שמירת הסדנה הפתוחה</button>`,
+      memorial: `<button class="btn btn-primary btn-block" data-save-mem="1">שמירה</button>`,
+      content:  `<button class="btn btn-primary btn-block" data-save-site="1">שמירת התוכן</button>`
+    };
+    sheetFoot(FOOT[view] || '');
   }
 
   /* ======================================================================
@@ -110,6 +114,8 @@ const Admin = (() => {
   }
 
   function collect(scope = document) {
+    // מקלדות מובייל מחזיקות את הערך עד לאיבוד המיקוד. מסיימים קודם.
+    try { document.activeElement && document.activeElement.blur(); } catch (e) {}
     const out = {};
     $$('[data-f]', scope).forEach(el => {
       out[el.dataset.f] = el.dataset.type === 'check' ? el.checked : el.value;
@@ -492,7 +498,7 @@ const Admin = (() => {
           mem_names: (m.familyNames || []).join(', '),
           mem_fout: m.familyOutro
         })}
-        <button class="btn btn-primary btn-block" data-save-mem="1" style="margin-top:18px">שמירה</button>`;
+`;
     },
 
     moments() {
@@ -536,7 +542,7 @@ const Admin = (() => {
               <input type="checkbox" data-owp="best" data-i="${i}" style="width:auto" ${pl.best ? 'checked' : ''}></div>
           </div></div>`).join('')}
 
-        <button class="btn btn-primary btn-block" data-save-ow="1" style="margin-top:18px">שמירת הסדנה הפתוחה</button>`;
+`;
     },
 
     products() {
@@ -630,7 +636,7 @@ const Admin = (() => {
         ${form([{ k: 'slots', t: 'שעות אפשריות', ph: '09:00, 11:00, 16:00' }], { slots: (s.bookingSlots || []).join(', ') })}
         <div class="eyebrow" style="margin-top:24px">אבטחה</div>
         ${form([{ k: 'pin', t: 'קוד כניסה לניהול' }], { pin: s.pin })}
-        <button class="btn btn-primary btn-block" data-save-site="1" style="margin-top:20px">שמירת התוכן</button>`;
+`;
     },
 
     publish() {
@@ -662,6 +668,7 @@ const Admin = (() => {
      ====================================================================== */
   function wire() {
     document.addEventListener('click', async e => {
+     try {
       const t = e.target;
 
       const nav = t.closest('[data-adm]');
@@ -738,6 +745,10 @@ const Admin = (() => {
           return;
         }
       }
+     } catch (err) {
+      console.error('שגיאה בניהול:', err);
+      toast('משהו השתבש: ' + (err && err.message ? err.message : 'שגיאה לא מזוהה'));
+     }
     });
 
     // תמונות — עם חיווי, נעילת השמירה בזמן העיבוד, וכישלון קולני

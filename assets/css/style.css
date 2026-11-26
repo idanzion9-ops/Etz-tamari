@@ -414,6 +414,7 @@ input[type="file"] { padding: 9px; background: var(--paper); }
   position: fixed; z-index: 101;
   inset-inline: 0; bottom: 0;
   max-height: 92vh;
+  max-height: 92dvh;
   background: var(--birch);
   border-radius: var(--r-lg) var(--r-lg) 0 0;
   box-shadow: 0 -12px 40px rgba(33,36,31,.22);
@@ -809,7 +810,7 @@ ul.pj-spec { list-style: none; padding: 0; margin: 0 0 8px; }
    ========================================================================== */
 
 .a11y-fab {
-  position: fixed; z-index: 500;
+  position: fixed; z-index: 90;   /* מתחת לרקע המוחשך של המגירה (100) */
   inset-inline-start: 16px;
   bottom: calc(var(--tab-h) + 18px + env(safe-area-inset-bottom));
   width: 52px; height: 52px; border-radius: 50%;
@@ -822,7 +823,7 @@ ul.pj-spec { list-style: none; padding: 0; margin: 0 0 8px; }
 .a11y-fab:hover { transform: scale(1.07); box-shadow: 0 6px 20px rgba(26,91,196,.5); }
 
 .a11y-panel {
-  position: fixed; z-index: 501;
+  position: fixed; z-index: 91;
   inset-inline-start: 16px;
   bottom: calc(var(--tab-h) + 80px + env(safe-area-inset-bottom));
   width: min(300px, calc(100vw - 32px));

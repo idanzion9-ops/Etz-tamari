@@ -112,15 +112,29 @@ const Store = (() => {
     return content;
   }
 
+  /**
+   * שומר ומוודא. חלק מהדפדפנים לא זורקים כשהאחסון מלא — הם פשוט
+   * לא כותבים. לכן קוראים את הערך בחזרה ומשווים, ולא סומכים על ההצלחה.
+   */
   function saveContent() {
-    content.updatedAt = new Date().toISOString();
-    const ok = writeJSON(CONTENT_KEY, content);
-    listeners.forEach(fn => { try { fn(); } catch (e) { console.warn(e); } });
-    if (!ok) {
-      // האחסון מלא — כמעט תמיד בגלל תמונות. עדיף להגיד מאשר לשקר.
-      throw new Error('האחסון במכשיר מלא. מחקו כמה תמונות מהגלריה, או ייצאו גיבוי ואפסו.');
+    const stamp = new Date().toISOString();
+    content.updatedAt = stamp;
+
+    let wrote = writeJSON(CONTENT_KEY, content);
+    if (wrote) {
+      try {
+        const back = JSON.parse(localStorage.getItem(CONTENT_KEY) || '{}');
+        if (back.updatedAt !== stamp) wrote = false;
+      } catch (e) { wrote = false; }
     }
-    return true;
+
+    listeners.forEach(fn => { try { fn(); } catch (e) { console.warn(e); } });
+
+    if (!wrote) {
+      const kb = Math.round(JSON.stringify(content).length / 1024);
+      throw new Error(`השמירה נכשלה — האחסון במכשיר מלא (${kb}KB). מחקו תמונות מהגלריה, או ייצאו גיבוי ואפסו.`);
+    }
+    return stamp;
   }
 
   function saveLocal() {
