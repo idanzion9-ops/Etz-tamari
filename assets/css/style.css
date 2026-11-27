@@ -719,7 +719,7 @@ ul.pj-spec { list-style: none; padding: 0; margin: 0 0 8px; }
   position: fixed; inset: 0; z-index: 9000;
   background: var(--birch);
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px;
-  animation: splash-out .45s ease .55s forwards;
+  animation: splash-fade .4s ease .5s forwards;
 }
 #splash img { animation: splash-in .6s cubic-bezier(.22,1,.36,1) both; }
 #splash span {
@@ -727,9 +727,9 @@ ul.pj-spec { list-style: none; padding: 0; margin: 0 0 8px; }
   animation: splash-in .6s cubic-bezier(.22,1,.36,1) .12s both;
 }
 @keyframes splash-in { from { opacity: 0; transform: scale(.9); } to { opacity: 1; transform: none; } }
-@keyframes splash-out { to { opacity: 0; visibility: hidden; } }
+@keyframes splash-fade { to { opacity: 0; } }
 @media (prefers-reduced-motion: reduce) {
-  #splash { animation: splash-out .01ms ease .3s forwards; }
+  #splash, #splash img, #splash span { animation: none; }
 }
 
 /* הלוגו בכותרת */
@@ -887,6 +887,9 @@ html[data-a11y-motion="1"] *::after {
   transition: none !important;
   scroll-behavior: auto !important;
 }
+/* מסך הפתיחה לא נשען על אנימציה כדי להיעלם, אבל אם הקוד לא הספיק —
+   עצירת האנימציות לא תשאיר אותו על המסך. */
+html[data-a11y-motion="1"] #splash { display: none !important; }
 
 /* ==========================================================================
    לזכרה — מדור הזיכרון

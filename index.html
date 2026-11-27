@@ -32,6 +32,24 @@
   <img src="logo-large.png" alt="" width="180" height="180">
   <span>עץ תמרי</span>
 </div>
+<script>
+/* מסך הפתיחה מוסר בקוד, לא באנימציה.
+   כשהמשתמש בוחר "עצירת אנימציות", אנימציית ההיעלמות מבוטלת —
+   ואם היא זו שמסתירה את המסך, האפליקציה ננעלת עליו. */
+(function () {
+  var done = false;
+  function hide() {
+    if (done) return;
+    done = true;
+    var el = document.getElementById('splash');
+    if (el && el.parentNode) el.parentNode.removeChild(el);
+  }
+  setTimeout(hide, 1000);                               // המסלול הרגיל
+  document.addEventListener('DOMContentLoaded', function () { setTimeout(hide, 600); });
+  window.addEventListener('load', hide);                // רשת ביטחון
+  setTimeout(hide, 4000);                               // ובכל מקרה
+})();
+</script>
 
 
 <!-- ===================== סרגל עליון ===================== -->
