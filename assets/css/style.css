@@ -1191,3 +1191,6 @@ html[data-a11y-contrast="1"] .step-il { background: #fff; border-color: #000; }
   display: grid; place-items: center;
 }
 .step.done .step-il .step-no { background: var(--sage-deep); border-color: var(--sage-deep); color: #fff; }
+
+/* שורת המשנה בכותרת לא נשברת לשתי שורות באנגלית */
+.wordmark .sub { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 40vw; }

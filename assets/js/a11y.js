@@ -44,34 +44,42 @@ const A11y = (() => {
     });
     const lbl = document.getElementById('a11y-size-label');
     if (lbl) lbl.textContent = `${100 + state.font * 15}%`;
+    document.querySelectorAll('[data-lang]').forEach(b =>
+      b.setAttribute('aria-pressed', String(b.dataset.lang === I18n.get())));
   }
 
   /* ---------- הלוח ---------- */
   function panelHtml() {
     return `
-      <h3>נגישות</h3>
-      <p class="hint" style="margin:0">ההגדרות נשמרות במכשיר שלכם.</p>
+      <h3>${I18n.t('a11y.title')}</h3>
+      <p class="hint" style="margin:0">${I18n.t('a11y.saved')}</p>
 
-      <div class="lbl" style="margin-top:14px">גודל הטקסט — <span id="a11y-size-label">100%</span></div>
+      <div class="lbl" style="margin-top:14px">${I18n.t('a11y.lang')}</div>
       <div class="a11y-row" style="margin-top:6px">
-        <button class="a11y-btn" data-a11y="bigger">א+ הגדלה</button>
-        <button class="a11y-btn" data-a11y="smaller">א− הקטנה</button>
+        <button class="a11y-btn" data-lang="he" aria-pressed="false">עברית</button>
+        <button class="a11y-btn" data-lang="en" aria-pressed="false">English</button>
       </div>
 
-      <div class="lbl">תצוגה</div>
+      <div class="lbl">${I18n.t('a11y.size')} — <span id="a11y-size-label">100%</span></div>
+      <div class="a11y-row" style="margin-top:6px">
+        <button class="a11y-btn" data-a11y="bigger">${I18n.t('a11y.bigger')}</button>
+        <button class="a11y-btn" data-a11y="smaller">${I18n.t('a11y.smaller')}</button>
+      </div>
+
+      <div class="lbl">${I18n.t('a11y.display')}</div>
       <div class="a11y-row">
-        <button class="a11y-btn" data-a11y="contrast" aria-pressed="false">ניגודיות גבוהה</button>
-        <button class="a11y-btn" data-a11y="gray" aria-pressed="false">גווני אפור</button>
-        <button class="a11y-btn" data-a11y="links" aria-pressed="false">הדגשת קישורים</button>
-        <button class="a11y-btn" data-a11y="readable" aria-pressed="false">גופן קריא</button>
-        <button class="a11y-btn" data-a11y="motion" aria-pressed="false">עצירת אנימציות</button>
-        <button class="a11y-btn" data-a11y="reset">איפוס הכול</button>
+        <button class="a11y-btn" data-a11y="contrast" aria-pressed="false">${I18n.t('a11y.contrast')}</button>
+        <button class="a11y-btn" data-a11y="gray" aria-pressed="false">${I18n.t('a11y.gray')}</button>
+        <button class="a11y-btn" data-a11y="links" aria-pressed="false">${I18n.t('a11y.links')}</button>
+        <button class="a11y-btn" data-a11y="readable" aria-pressed="false">${I18n.t('a11y.font')}</button>
+        <button class="a11y-btn" data-a11y="motion" aria-pressed="false">${I18n.t('a11y.motion')}</button>
+        <button class="a11y-btn" data-a11y="reset">${I18n.t('a11y.reset')}</button>
       </div>
 
-      <button class="btn btn-quiet btn-block btn-sm" data-a11y="statement">הצהרת נגישות</button>`;
+      <button class="btn btn-quiet btn-block btn-sm" data-a11y="statement">${I18n.t('a11y.statement')}</button>`;
   }
 
-  const STATEMENT = `
+  const STATEMENT_HE = `
     <p class="lead" style="margin-top:0">אנחנו רוצים שכל אחד יוכל להשתמש באפליקציה של עץ תמרי, בלי קשר ליכולת או לטכנולוגיה שבה הוא משתמש.</p>
 
     <div class="eyebrow" style="margin-top:22px">מה נעשה</div>
@@ -93,6 +101,28 @@ const A11y = (() => {
 
     <p class="hint">עודכן לאחרונה: נובמבר 2026</p>`;
 
+  const STATEMENT_EN = `
+    <p class="lead" style="margin-top:0">We want everyone to be able to use the Etz Tamari app, whatever their ability or the technology they use.</p>
+
+    <div class="eyebrow" style="margin-top:22px">What we have done</div>
+    <p>The app was built to meet Israeli standard SI 5568 at level AA, which adopts the WCAG 2.0 guidelines. Among other things:</p>
+    <ul class="pj-spec">
+      <li>Full keyboard navigation, with a clear focus indicator</li>
+      <li>Ordered headings and labels for screen readers</li>
+      <li>Colour contrast checked throughout</li>
+      <li>An accessibility menu: larger text, high contrast, greyscale, highlighted links, a readable font and stopped animation</li>
+      <li>The operating system's reduced-motion setting is respected</li>
+      <li>A layout that adapts to any screen size</li>
+    </ul>
+
+    <div class="eyebrow" style="margin-top:22px">Limitations we know about</div>
+    <p>The app is under continuous development. Some parts may not yet be fully accessible. We fix every issue reported to us.</p>
+
+    <div class="eyebrow" style="margin-top:22px">Run into a problem?</div>
+    <p>We would like to hear about it, and we welcome suggestions. Contact details are on the Me screen and at the foot of the page. We will get back to you as soon as we can.</p>
+
+    <p class="hint">Last updated: November 2026</p>`;
+
   /* ---------- חיווט ---------- */
   function init() {
     load();
@@ -113,6 +143,7 @@ const A11y = (() => {
     const toggle = open => {
       panel.classList.toggle('on', open);
       fab.setAttribute('aria-expanded', String(open));
+      if (open && typeof Nav !== 'undefined') Nav.push('a11y');
     };
 
     fab.addEventListener('click', e => {
@@ -131,6 +162,13 @@ const A11y = (() => {
     });
 
     panel.addEventListener('click', e => {
+      const lb = e.target.closest('[data-lang]');
+      if (lb) {
+        I18n.set(lb.dataset.lang);
+        panel.innerHTML = panelHtml();
+        syncButtons();
+        return;
+      }
       const b = e.target.closest('[data-a11y]');
       if (!b) return;
       const k = b.dataset.a11y;
@@ -140,7 +178,7 @@ const A11y = (() => {
       else if (k === 'reset')   state = { ...DEFAULTS };
       else if (k === 'statement') {
         toggle(false);
-        if (window.UI) UI.sheet({ title: 'הצהרת נגישות', body: STATEMENT });
+        if (window.UI) UI.sheet({ title: I18n.t('a11y.statement'), body: I18n.isEn() ? STATEMENT_EN : STATEMENT_HE });
         return;
       }
       else state[k] = state[k] ? 0 : 1;

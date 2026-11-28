@@ -2,7 +2,7 @@
    מעטפת האפליקציה נשמרת במטמון; התוכן תמיד נטען מהרשת קודם,
    כדי שפרסום חדש יופיע מיד ולא ייתקע על גרסה ישנה. */
 
-const VERSION = 'etz-v11';
+const VERSION = 'etz-v12';
 const SHELL = [
   './',
   './index.html',
@@ -13,6 +13,8 @@ const SHELL = [
   './assets/js/app.js',
   './assets/js/admin.js',
   './assets/js/a11y.js',
+  './assets/js/i18n.js',
+  './assets/js/nav.js',
   './assets/js/illus.js',
   './assets/js/demo.js',
   './assets/js/account.js',

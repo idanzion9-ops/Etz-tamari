@@ -1,5 +1,5 @@
 {
-  "v": 5,
+  "v": 6,
   "updatedAt": null,
   "site": {
     "name": "עץ תמרי",
@@ -855,5 +855,666 @@
       "עומר"
     ],
     "familyOutro": "ימשיך להאיר את דרכנו תמיד, ויזכיר לנו לבחור בחיים, בקהילה ובאהבה, בדיוק כפי שהיא עשתה בכל יום."
+  },
+  "en": {
+    "site": {
+      "name": "Etz Tamari",
+      "tagline": "Woodwork · Community",
+      "heroTitle": "Two hours of <em>quiet</em>, and something you made by hand",
+      "heroText": "A community woodshop open to anyone. No experience needed, no rush.",
+      "aboutTitle": "About Etz Tamari",
+      "aboutHtml": "<p>Etz Tamari is a neighbourhood woodshop open to the community. A place to walk into after a long day, pick up a saw or a chisel, and find that ten minutes later your head has gone quiet.</p><p>Nobody is grading you and there is no pace to keep up with. There is a bench, sharp tools, the smell of sawdust, and people working side by side without talking much. Those who want to learn, learn. Those who came for the quiet get the quiet.</p><p>The shop carries the name of Tamar Kedem Siman Tov, of blessed memory, and continues her way.</p>",
+      "hours": [
+        {
+          "d": "Sunday–Thursday",
+          "t": "09:00–20:00"
+        },
+        {
+          "d": "Friday",
+          "t": "09:00–13:00"
+        },
+        {
+          "d": "Saturday",
+          "t": "Closed"
+        }
+      ],
+      "projectsIntro": "Small things you can make from offcuts — pallet boards, leftovers from a bigger build, any piece too good to throw out. Each one is a working screen: materials, tools, and steps you tick off as you go.",
+      "momentsIntro": "Pictures from the benches, the tools, and the people who pass through."
+    },
+    "openWorkshop": {
+      "title": "Free bench hours",
+      "text": "Turn up, take a bench, and work on whatever you like. The tools are here, advice is here if you want it, and the rest is yours. Good for finishing a project, and just as good for clearing your head.",
+      "hours": [
+        {
+          "d": "Sunday–Thursday",
+          "t": "16:00–20:00"
+        },
+        {
+          "d": "Friday",
+          "t": "09:00–13:00"
+        },
+        {
+          "d": "Saturday",
+          "t": "Closed"
+        }
+      ],
+      "plans": [
+        {
+          "name": "Single entry",
+          "desc": "Up to four hours at the bench"
+        },
+        {
+          "name": "5-entry pass",
+          "desc": "Valid for six months"
+        },
+        {
+          "name": "10-entry pass",
+          "desc": "Valid for a year"
+        },
+        {
+          "name": "Unlimited membership",
+          "desc": "All opening hours, calendar month"
+        }
+      ]
+    },
+    "memorial": {
+      "title": "In memory of Tamar Kedem Siman Tov",
+      "lead": "Etz Tamari was founded as a space for woodwork and making, carrying on her way, her work, and her light.",
+      "paragraphs": [
+        "For Tamar, art was never just a hobby — it was a language, a way of living, and the lens through which she saw the world. Coming from education and from making, she brought colour, a sense of beauty and original thinking to every project she touched. She believed in the power of art to connect people, to heal, and to create a space where the soul can grow. Tamar knew how to find beauty in the small details of life, and her creativity showed not only in material, but in her ability to think beyond the obvious, to start new things, and to bring inspiration into every room she was in.",
+        "Beyond all her public work, anyone who knew Tamar gained a friend for life. Her trademark was that wide, bright, infectious smile — a smile that sent out everything good in her. Tamar was an anchor of warmth and of joy. She had a rare ability to truly see each person, to make you feel you were the most important thing in that moment, and to listen with her whole heart. She was there to lift you through the hard moments, to celebrate the small wins, and to wrap you in love. Her presence in a room simply changed the air — she brought lightness alongside depth, and she was a friend you could trust with your eyes closed.",
+        "Tamar left behind a legacy of love for people, of work without compromise, and of faith in the good."
+      ],
+      "familyIntro": "Her memory, and the memory of her beloved family murdered in their home in Nir Oz on the seventh of October 2023",
+      "familyNames": [
+        "Johnny",
+        "Shahar",
+        "Arbel",
+        "Omer"
+      ],
+      "familyOutro": "will go on lighting our way, and will remind us to choose life, community and love, exactly as she did every single day."
+    },
+    "workshops": {
+      "w1": {
+        "title": "Make your own cutting board",
+        "summary": "One evening, one oak board, and you leave with a kitchen tool you will use every day.",
+        "description": "<p>We start by choosing the board and reading the direction of the grain, move on to sawing, easing the corners and sanding in three grits, and finish with food-safe oil. No experience needed — every step is demonstrated before anyone picks up a tool.</p><p>The evening goes fast. Most people notice halfway through that they are no longer thinking about anything except the board under their hands.</p>",
+        "duration": "3 hours",
+        "level": "Beginners",
+        "materials": "Oak or walnut board, use of tools, finishing oil, hot drinks"
+      },
+      "w2": {
+        "title": "Stool with wood joints",
+        "summary": "No screws, no quick glue — mortise and tenon joints that hold for generations.",
+        "description": "<p>Two sessions for anyone who has held a saw and wants to understand how furniture actually holds together. We work with chisels, a back saw and marking tools.</p><p>Slow, precise work with no noisy machines. If you like settling into one thing for a long stretch, this is your evening.</p>",
+        "duration": "2 sessions × 4 hours",
+        "level": "Experienced",
+        "materials": "Solid timber, use of hand tools, oil-wax finish"
+      },
+      "w3": {
+        "title": "Spoon carving evening",
+        "summary": "One tool, one block of wood, and three quiet hours of carving.",
+        "description": "<p>The quietest class we run. Hand tools only — a carving knife and a hook knife — on soft wood. No machines, no noise, just the sound of the blade in the grain.</p><p>Especially good if what you want is two or three hours with the world switched off.</p>",
+        "duration": "3 hours",
+        "level": "All levels",
+        "materials": "Wood blank, knives, safety glove, food-safe oil"
+      }
+    },
+    "classes": {
+      "c1": {
+        "title": "Woodworking for children",
+        "summary": "A steady weekly session: each child builds their own project, at their own pace.",
+        "description": "<p>A small group that meets once a week. We start with safe hand tools and build up gradually. By the end of the term each child takes home three or four projects they built from start to finish.</p><p>No comparisons and no prize for finishing first. A child who wants to linger over one project lingers.</p>",
+        "schedule": "Mondays, 17:00–18:30",
+        "ageRange": "8–13"
+      },
+      "c2": {
+        "title": "Adult woodworking — evening term",
+        "summary": "Ten sessions that build real foundations in working with wood.",
+        "description": "<p>From basic hand tools through to the table machines. Each session is given over to one skill and a small project that puts it to work.</p><p>Most people who come are not planning to become woodworkers. They are looking for one evening a week that is entirely theirs.</p>",
+        "schedule": "Wednesdays, 19:00–21:30",
+        "ageRange": "18+"
+      }
+    },
+    "products": {
+      "p1": {
+        "name": "Bench chisel, 12mm",
+        "category": "Hand tools",
+        "desc": "Honed carbon steel, ash handle. The first tool worth buying."
+      },
+      "p2": {
+        "name": "Spoon carving hook knife",
+        "category": "Hand tools",
+        "desc": "Curved blade for hollowing the bowl. Arrives sharp and ready."
+      },
+      "p3": {
+        "name": "Oil-wax finish",
+        "category": "Finishes",
+        "desc": "500ml. Food-safe, dry in four hours."
+      },
+      "p4": {
+        "name": "Sandpaper set",
+        "category": "Consumables",
+        "desc": "Grits 80 to 400, twelve sheets."
+      }
+    },
+    "projects": {
+      "pj1": {
+        "title": "Phone stand",
+        "summary": "One block of wood and one angled groove. The perfect first project.",
+        "materials": [
+          "An offcut of solid wood at least 4cm thick, 12cm long and 8cm wide",
+          "Sandpaper in 120 and 220 grit",
+          "A little food-safe or oil-wax finish"
+        ],
+        "tools": [
+          "Hand saw or back saw",
+          "Pencil and rule",
+          "Clamps or a bench vice",
+          "Try square"
+        ],
+        "tip": "If you have no block thick enough, glue two thin offcuts face to face and leave them clamped for two hours.",
+        "steps": [
+          {
+            "t": "Choose the front face",
+            "d": "Look at all four faces and pick the best one. That will be the front. Mark it lightly in pencil so you do not lose track."
+          },
+          {
+            "t": "Mark the groove",
+            "d": "On the top face, mark a line at an angle of roughly 65 degrees. The groove should be the thickness of your phone with its case, plus 2mm. Depth: about two thirds of the block."
+          },
+          {
+            "t": "Clamp and saw",
+            "d": "Clamp the block. Saw down both marked lines to the depth you set. Work slowly and let the saw do the work."
+          },
+          {
+            "t": "Remove the waste between",
+            "d": "Saw two or three more cuts between the first two, then break out the thin slices with a chisel or push them out with a flat screwdriver. Level the bottom of the groove."
+          },
+          {
+            "t": "Open a channel for the cable",
+            "d": "On the front, at the bottom of the groove, mark a half circle 1.5cm wide and take it out with a round file or by sanding. This is what lets you charge while the phone stands."
+          },
+          {
+            "t": "Ease and sand",
+            "d": "Take the sharp edge off every corner with 120 grit — no need to overdo it, a light pass that stops it cutting your hand is enough. Move to 220 until the surface is smooth to the touch."
+          },
+          {
+            "t": "Clean and oil",
+            "d": "Wipe all the dust off with a damp cloth and wait five minutes. Apply a thin coat of oil, wait fifteen minutes, and wipe off the excess. The wood will darken and look twice as good."
+          }
+        ]
+      },
+      "pj2": {
+        "title": "Drink coasters",
+        "summary": "Four square pieces. The best project to start with alongside children.",
+        "materials": [
+          "Offcuts 1–1.5cm thick",
+          "Sandpaper in 120 and 220",
+          "Food-safe oil",
+          "Four self-adhesive felt pads (optional)"
+        ],
+        "tools": [
+          "Hand saw",
+          "Rule and pencil",
+          "Try square",
+          "Clamps"
+        ],
+        "tip": "If your offcuts are different colours, do not try to match them. A set of four in four tones looks deliberate and good.",
+        "steps": [
+          {
+            "t": "Mark out four squares",
+            "d": "10×10cm each. Use the square to make sure the corners are true — a crooked coaster will rock."
+          },
+          {
+            "t": "Saw them out",
+            "d": "Clamp one piece at a time and saw just outside the line. The excess comes off later with sanding, which is easier than fixing a cut that went inside."
+          },
+          {
+            "t": "True up the edges",
+            "d": "Lay a sheet of 120 grit on a flat table and work each coaster over it in a circular motion. That brings all four to exactly the same size."
+          },
+          {
+            "t": "Ease the corners",
+            "d": "Sand off the four sharp corners. You can round the top edge slightly too — it feels better in the hand."
+          },
+          {
+            "t": "Sand until smooth",
+            "d": "Move to 220 on every face. Check with your hand, not your eyes: anywhere that feels rough needs another pass."
+          },
+          {
+            "t": "Oil them",
+            "d": "A thin coat of oil on every side including the edges. Wipe off the excess after fifteen minutes. Note that ordinary cooking oil can go rancid over time — food-grade mineral oil is better."
+          },
+          {
+            "t": "Add felt underneath",
+            "d": "If you have self-adhesive felt, stick four pads at the corners of the underside. It protects the table and makes the coaster feel finished."
+          }
+        ]
+      },
+      "pj3": {
+        "title": "Key rack",
+        "summary": "A small board, four hooks, and no more hunting at the door.",
+        "materials": [
+          "An offcut 30–40cm long, 10–12cm wide, 1.8cm thick",
+          "Four small screw-in hooks",
+          "Two keyhole hangers or a hanging hole",
+          "Sandpaper in 120 and 220",
+          "Oil or lacquer"
+        ],
+        "tools": [
+          "Drill-driver or screwdriver",
+          "Drill with a 2mm bit",
+          "Rule and pencil",
+          "Hand saw"
+        ],
+        "tip": "Want to go further? Bore one large round hole at one end — it becomes a small pocket for coins and cards.",
+        "steps": [
+          {
+            "t": "Cut to the length you want",
+            "d": "Measure the spot by the door before you cut. 35cm suits most walls."
+          },
+          {
+            "t": "Sand everything before assembly",
+            "d": "It is far easier to sand a flat board than to sand around hooks. 120 then 220, edges included."
+          },
+          {
+            "t": "Mark the hook positions",
+            "d": "Measure the length, divide by five, and mark four points at equal spacing. Mark them all at the same height — 3cm up from the bottom edge."
+          },
+          {
+            "t": "Drill pilot holes",
+            "d": "A bit thinner than the hook thread, two thirds of its length deep. Without a pilot hole the board can split, especially pallet wood that has dried out."
+          },
+          {
+            "t": "Drive the hooks in",
+            "d": "By hand, not with a power driver. Turn until the hook sits tight and faces the same way as the others."
+          },
+          {
+            "t": "Apply the finish",
+            "d": "Oil or clear lacquer. If the board is going on a dark hallway wall, a satin lacquer will bounce back a little light."
+          },
+          {
+            "t": "Fit the hangers",
+            "d": "Upside down, on the back of the board: two keyhole hangers a third in from each end. Measure that they are at exactly the same height, or the rack will hang crooked."
+          }
+        ]
+      },
+      "pj4": {
+        "title": "Hanging planter",
+        "summary": "Pallet boards become a balcony planter. With drainage, done properly.",
+        "materials": [
+          "Five pallet boards about 50cm long",
+          "Wood screws 4×40mm",
+          "8mm braided rope, about 3 metres",
+          "Sandpaper in 80 and 120",
+          "Teak oil or exterior lacquer"
+        ],
+        "tools": [
+          "Hand saw or jigsaw",
+          "Drill-driver",
+          "3mm and 10mm drill bits",
+          "Rule and pencil"
+        ],
+        "tip": "Before you hang it — fill it with soil and hang it empty for half a day to check the rope and the wall hold the wet weight.",
+        "steps": [
+          {
+            "t": "Check the pallet is safe",
+            "d": "Look for a stamp on the side of the pallet. HT marks a pallet heat-treated for sanitation — safe to use. MB means methyl bromide, a toxic fumigant — never use that pallet for anything, least of all for plants."
+          },
+          {
+            "t": "Break it down and clean it",
+            "d": "Pull the old nails out with a pry bar. Go over the boards with 80 grit to take off dirt and splinters."
+          },
+          {
+            "t": "Cut the parts",
+            "d": "Two boards for the long sides (50cm), two for the base, and two short ones for the ends — the width of the base plus two board thicknesses."
+          },
+          {
+            "t": "Build the box",
+            "d": "Join the two long sides to the end pieces first, to make a frame. A 3mm pilot hole before every screw — pallet wood is dry and splits easily."
+          },
+          {
+            "t": "Fit the base",
+            "d": "Lay the two base boards inside the frame with a 5mm gap between them. Screw from the outside in."
+          },
+          {
+            "t": "Drill the drainage holes",
+            "d": "Four to six 10mm holes in the base. Without drainage the roots rot within a month — this is the step easiest to skip and most expensive to miss."
+          },
+          {
+            "t": "Drill the hanging holes",
+            "d": "A 10mm hole in each of the four top corners, 2cm in from the edge."
+          },
+          {
+            "t": "Sand and finish",
+            "d": "80 then 120 on every surface. Two coats of teak oil or exterior lacquer, fully dry between coats. An unfinished planter outdoors lasts one season."
+          },
+          {
+            "t": "Thread the rope",
+            "d": "Cut two equal lengths, thread each through two corners on the same side, and knot below each hole. Level the box before you tighten them down."
+          }
+        ]
+      },
+      "pj5": {
+        "title": "Small storage box",
+        "summary": "Five boards and a simple joint. The basis of every box you will ever build.",
+        "materials": [
+          "Board offcuts 1.2–1.8cm thick",
+          "Wood glue",
+          "Fine nails or 3×30 screws",
+          "Sandpaper in 120 and 180",
+          "Oil or wax"
+        ],
+        "tools": [
+          "Back saw or hand saw",
+          "Try square",
+          "Four clamps or a band clamp",
+          "Hammer or drill-driver"
+        ],
+        "tip": "If the corners did not come out perfect, that is fine. A light chamfer sanded across each corner turns a small gap into a deliberate line.",
+        "steps": [
+          {
+            "t": "Decide the dimensions",
+            "d": "Start from what the box has to hold. 20×14×10cm is a useful size for most things. Write the numbers down before you cut."
+          },
+          {
+            "t": "Cut five parts",
+            "d": "Two long sides, two short sides, and a base. The short sides sit between the long ones, so their length is the internal width — the box width less two board thicknesses."
+          },
+          {
+            "t": "Dry fit it",
+            "d": "Assemble everything without glue and check the corners with the square. Now is the time to fix things, not after the glue has set."
+          },
+          {
+            "t": "Sand the inside faces",
+            "d": "Sand the inner face of every board before assembly. Once the box is closed you cannot reach the corners."
+          },
+          {
+            "t": "Glue the frame",
+            "d": "A thin bead of glue on each mating edge. Assemble the four sides, clamp with a band or clamps, and check the diagonals — the two measurements should match."
+          },
+          {
+            "t": "Reinforce with nails",
+            "d": "Once the glue has grabbed, two fine nails in each corner. In hardwood, drill a pilot hole. Wipe off squeeze-out with a damp cloth straight away — dried glue will not take a finish and leaves a pale patch."
+          },
+          {
+            "t": "Fit the base",
+            "d": "Spread glue on the bottom edge of the frame, lay the base board on, and clamp. You can also leave it a millimetre oversize all round and sand it flush afterwards."
+          },
+          {
+            "t": "Finish it",
+            "d": "After two hours of drying, sand the outside with 120 then 180, ease every edge, and apply oil or wax."
+          }
+        ]
+      },
+      "pj6": {
+        "title": "Candle holder",
+        "summary": "A block of wood and one bored hole. Three at different heights look excellent together.",
+        "materials": [
+          "Solid wood offcuts, 7×7cm and up",
+          "Sandpaper in 120 and 220",
+          "Oil or wax",
+          "Metal tealight cups (recommended)"
+        ],
+        "tools": [
+          "Pillar drill or hand drill",
+          "40mm hole saw or Forstner bit",
+          "Hand saw",
+          "Clamps"
+        ],
+        "tip": "Never leave a lit candle unattended on a wooden holder, even with a metal cup.",
+        "steps": [
+          {
+            "t": "Cut to different heights",
+            "d": "If you have several blocks, cut them to 8, 12 and 16cm. Three different heights look better than three identical ones."
+          },
+          {
+            "t": "Find the centre",
+            "d": "Draw two diagonals corner to corner across the top face. Where they cross is the exact centre."
+          },
+          {
+            "t": "Clamp it down hard",
+            "d": "Clamps are not optional here. A hole saw grabs the wood and spins it with real force if it is not held."
+          },
+          {
+            "t": "Bore the recess",
+            "d": "1.5cm deep for a standard tealight. Go slowly and pull the bit out now and then to clear the chips. If you are drilling by hand, keep the drill upright and check from the side that you are not leaning."
+          },
+          {
+            "t": "Check the fit",
+            "d": "Drop the tealight in. It should sit flat and slightly below the surface, not proud of it."
+          },
+          {
+            "t": "Sand it",
+            "d": "120 then 220 on every face and around the rim of the recess. Ease the top corners lightly."
+          },
+          {
+            "t": "Finish and add the cup",
+            "d": "Oil or wax, not a flammable lacquer. Drop a metal cup into the recess — it catches the molten wax and keeps the flame off the wood."
+          }
+        ]
+      },
+      "pj7": {
+        "title": "Strip cutting board",
+        "summary": "Gluing up narrow strips of offcut. How to turn waste into something that looks expensive.",
+        "materials": [
+          "Solid wood offcuts only — oak, walnut, maple, beech (no chipboard, no MDF, no plywood)",
+          "Water-resistant wood glue (D3)",
+          "Sandpaper in 80, 120 and 220",
+          "Food-grade mineral oil"
+        ],
+        "tools": [
+          "Table saw, or hand saw with a guide",
+          "At least four long bar clamps",
+          "Hand plane or sander",
+          "Try square"
+        ],
+        "tip": "Never put a board like this through the dishwasher and never leave it sitting in water. Quick wash, dry off, stand it on edge.",
+        "steps": [
+          {
+            "t": "Sort the material",
+            "d": "Solid wood only. Industrially bonded boards are not food safe and will not survive water. Build a stack of strips of similar thickness."
+          },
+          {
+            "t": "True one face on each",
+            "d": "Every strip needs one perfectly straight face to glue to. A crooked face leaves a gap that fills with water and grows mould."
+          },
+          {
+            "t": "Rip into strips",
+            "d": "3–4cm wide, all the same length. Lay them out on the table and play with the order until the arrangement looks right."
+          },
+          {
+            "t": "Mark a triangle",
+            "d": "Draw one large triangle across all the laid-out strips. Once they are covered in glue they all look the same — the triangle is what gets you back to the right order."
+          },
+          {
+            "t": "Glue it up",
+            "d": "Glue on every mating face, and do not be stingy. Bring it all together and clamp alternately — one from above, one from below — so the panel does not bow."
+          },
+          {
+            "t": "Wipe and wait",
+            "d": "Wipe off the squeeze-out with a damp cloth. Leave it clamped overnight. Wood glue only reaches full strength after 24 hours."
+          },
+          {
+            "t": "Flatten both faces",
+            "d": "Take the clamps off and flatten with a plane or sander, one face first and then the other. Start at 80 and move to 120."
+          },
+          {
+            "t": "Trim to size and ease the edges",
+            "d": "Square up all four edges to the final size. Ease every edge — a board with a sharp edge chips in use."
+          },
+          {
+            "t": "Raise the grain and sand again",
+            "d": "Wipe the whole board with a damp cloth and let it dry. The fibres will stand up. Sand at 220. Skip this and the board will feel rough after its first wash."
+          },
+          {
+            "t": "Oil it generously",
+            "d": "Food-grade mineral oil, at least three coats, an hour between each. Wipe off the excess. Repeat once a month."
+          }
+        ]
+      },
+      "pj8": {
+        "title": "Book stand",
+        "summary": "Two boards at an angle. Holds a cookbook open without it slamming shut.",
+        "materials": [
+          "Two matching boards, about 25×20cm, 1.5cm thick",
+          "A thin strip 25cm long for the lip",
+          "Two small butt hinges, or glue and screws",
+          "A short chain or cord to set the angle",
+          "Sandpaper in 120 and 220"
+        ],
+        "tools": [
+          "Hand saw",
+          "Drill-driver",
+          "2mm drill bit",
+          "Chisel",
+          "Rule and pencil"
+        ],
+        "tip": "Bore a small finger hole in the lip. It becomes somewhere to rest a phone or slot a pencil.",
+        "steps": [
+          {
+            "t": "Cut two boards",
+            "d": "One becomes the back rest, the other the base. Matched in size, so the stand folds flat for storage."
+          },
+          {
+            "t": "Make the stop lip",
+            "d": "Cut a strip 2.5cm wide and 2cm tall, the length of the board. It stops the book sliding off."
+          },
+          {
+            "t": "Sand everything",
+            "d": "120 then 220 on all three parts, before assembly. Ease every edge."
+          },
+          {
+            "t": "Fix the lip on",
+            "d": "Glue along the bottom edge of the base board, then two screws up from underneath with pilot holes. Check it sits straight."
+          },
+          {
+            "t": "Fit the hinges",
+            "d": "Lay the two boards flat side by side, back to back. Mark the hinge positions a third in from each end, score the outline with a chisel, and screw them on."
+          },
+          {
+            "t": "Set the angle",
+            "d": "Open the stand to a comfortable angle — around 60 degrees. Measure the gap between the two boards at the midpoint, and fix a chain or cord of that length on both inner faces."
+          },
+          {
+            "t": "Test it holds",
+            "d": "Put a heavy book on it, open. If the stand slides backwards, add two felt or rubber feet underneath the base."
+          },
+          {
+            "t": "Finish it",
+            "d": "Oil or lacquer. In a kitchen, lacquer is better — stains wipe off it more easily."
+          }
+        ]
+      },
+      "pj9": {
+        "title": "Desk organiser",
+        "summary": "A tray with internal dividers. Every narrow offcut finds a job here.",
+        "materials": [
+          "Board offcuts 1–1.2cm thick",
+          "Wood glue",
+          "Fine nails",
+          "Sandpaper in 120 and 180",
+          "Oil or lacquer"
+        ],
+        "tools": [
+          "Back saw",
+          "Try square",
+          "Clamps",
+          "Narrow chisel"
+        ],
+        "tip": "Glue a scrap of felt into the bottom of the compartment meant for keys or coins. It kills the clatter every time they go in.",
+        "steps": [
+          {
+            "t": "Plan around what you have",
+            "d": "Put the things the organiser has to hold on the table — pens, a notebook, chargers — and measure around them. That way the dimensions come out useful rather than arbitrary."
+          },
+          {
+            "t": "Cut the outer tray",
+            "d": "Four sides and a base, exactly as in the storage box. 25×12×8cm works on most desks."
+          },
+          {
+            "t": "Cut the dividers",
+            "d": "One divider along the length and two across give you six compartments of different sizes. Measure each divider against the tray individually — do not assume they are all the same."
+          },
+          {
+            "t": "Mark the divider housings",
+            "d": "On the inner faces, mark where each divider lands. A shallow 3mm housing cut with a chisel gives the divider somewhere to sit straight."
+          },
+          {
+            "t": "Dry assemble",
+            "d": "Drop all the dividers in without glue and check everything sits. Pencil which divider goes where."
+          },
+          {
+            "t": "Glue the tray",
+            "d": "Assemble the four sides with glue, clamp, and check the diagonals."
+          },
+          {
+            "t": "Insert dividers and base",
+            "d": "A drop of glue in each housing, drop the dividers in, and only then glue the base on. The base locks everything in place."
+          },
+          {
+            "t": "Finish it",
+            "d": "After drying — 120 and 180 on the outside, oil or lacquer. Inside can stay bare."
+          }
+        ]
+      },
+      "pj10": {
+        "title": "Bird feeder",
+        "summary": "A pitched roof, a tray with drainage, and a hanging point. A good project to build with children.",
+        "materials": [
+          "Board offcuts 1.5cm thick",
+          "Wood screws 3.5×35mm",
+          "Wire or cord for hanging",
+          "Sandpaper in 120",
+          "Teak oil or exterior lacquer — for the roof and outer walls only"
+        ],
+        "tools": [
+          "Hand saw",
+          "Drill-driver",
+          "3mm and 6mm drill bits",
+          "Rule, pencil and square"
+        ],
+        "tip": "Empty and wash the tray every fortnight. A neglected feeder does birds more harm than good.",
+        "steps": [
+          {
+            "t": "Cut the base",
+            "d": "A tray 20×20cm. This is the part the birds stand on."
+          },
+          {
+            "t": "Add the edges",
+            "d": "Four strips 2cm tall around the base to stop the seed spilling. Leave a 1cm gap at each corner — that is where water drains out."
+          },
+          {
+            "t": "Drill for drainage",
+            "d": "Four 6mm holes in the base. Wet seed grows mould that is dangerous to birds, so this step is not optional."
+          },
+          {
+            "t": "Cut the two side walls",
+            "d": "Two triangles, or rectangles with a sloped top edge, 18cm tall. They carry the roof."
+          },
+          {
+            "t": "Fix the sides to the base",
+            "d": "Pilot holes then screws from underneath. Check with the square that they stand upright before the final tighten."
+          },
+          {
+            "t": "Build the roof",
+            "d": "Two boards leaning against each other at the ridge. Make the roof 3cm wider than the base on each side — that is what keeps rain off the food."
+          },
+          {
+            "t": "Drill the hanging holes",
+            "d": "A 6mm hole at the ridge, or two holes either side of the roof for a level hang."
+          },
+          {
+            "t": "Finish — outside only",
+            "d": "Oil or lacquer on the roof and the outer walls. Leave the inside of the tray completely bare: birds peck there, and you do not want them swallowing finish."
+          },
+          {
+            "t": "Hang it properly",
+            "d": "1.5 to 2 metres up, near a shrub or tree that gives the birds cover, and away from a window they might fly into."
+          }
+        ]
+      }
+    }
   }
 }

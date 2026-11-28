@@ -168,7 +168,9 @@ const Admin = (() => {
 
   /** עורך פריט באוסף — פותח מגירה משנית בתוך אותה מגירה */
   function editor(coll, fields, item, title) {
+    const enMode = I18n.isEn() && bilingual(coll);
     sheetBody(`<button class="mini" data-adm="${view}" style="margin-bottom:16px">→ ביטול</button>
+      ${enMode ? `<div class="alert ok" style="margin-bottom:14px"><span>🌐</span><span>עריכה באנגלית. המחירים, התמונות והמספרים משותפים לשתי השפות ונערכים בעברית.</span></div>` : ''}
       <h3 style="font-size:22px;margin-bottom:16px">${esc(title)}</h3>
       ${form(fields, item || {})}
       <input type="hidden" data-f="id" value="${esc(item?.id || '')}">`);
@@ -705,7 +707,9 @@ const Admin = (() => {
       const ed = t.closest('[data-edit]');
       if (ed) {
         const coll = ed.dataset.edit;
-        const rec = Store.find(coll, ed.dataset.id);
+        const rec0 = Store.find(coll, ed.dataset.id);
+        const rec = forEdit(coll, rec0);
+        if (rec && rec0) rec.id = rec0.id;
         const form = coll === 'projects' ? pjToForm(rec) : rec;
         const r = editor(coll, FIELDS[coll], form, 'עריכת ' + TITLES[coll][0]);
         if (coll === 'projects') appendIllusKey();
@@ -729,8 +733,10 @@ const Admin = (() => {
         ['price', 'capacity', 'sessions', 'qty', 'amount', 'stock', 'taken', 'people', 'total'].forEach(k => {
           if (data[k] !== undefined && data[k] !== '') data[k] = Number(data[k]);
         });
-        try { Store.upsert(coll, data); }
-        catch (err) { return toast(err.message); }
+        try {
+          if (I18n.isEn() && bilingual(coll)) saveTranslation(coll, data);
+          else Store.upsert(coll, data);
+        } catch (err) { return toast(err.message); }
         refreshPublic(); toast('נשמר'); view = { events: 'calendar', participants: 'people' }[coll] || coll;
         return render();
       }
@@ -819,6 +825,42 @@ const Admin = (() => {
         } catch (err) { toast('הקובץ אינו גיבוי תקין'); }
       }
     });
+  }
+
+  /* ======================================================================
+     עריכה דו-לשונית
+     כשהאפליקציה באנגלית, העריכה כותבת לתרגום ולא לרשומה המקורית.
+     ככה אותו טופס משמש לשתי השפות, בלי מסך נפרד.
+     ====================================================================== */
+
+  const TRANSLATABLE = {
+    workshops: ['title', 'summary', 'description', 'duration', 'level', 'materials'],
+    classes:   ['title', 'summary', 'description', 'schedule', 'ageRange'],
+    products:  ['name', 'category', 'desc'],
+    projects:  ['title', 'summary', 'materials', 'tools', 'tip', 'steps'],
+    moments:   ['caption']
+  };
+
+  const bilingual = coll => !!TRANSLATABLE[coll];
+
+  /** הערכים שיוצגו בטופס: התרגום כשקיים, אחרת המקור */
+  function forEdit(coll, rec) {
+    if (!rec || !I18n.isEn() || !bilingual(coll)) return rec;
+    return I18n.rec(coll, rec);
+  }
+
+  /** שמירה באנגלית: רק השדות הניתנים לתרגום, לתוך content.en */
+  function saveTranslation(coll, data) {
+    const id = data.id;
+    if (!id) throw new Error('אי אפשר ליצור פריט חדש במצב אנגלית. עברו לעברית, צרו, ואז תרגמו.');
+    const c = Store.content;
+    if (!c.en) c.en = {};
+    if (!c.en[coll]) c.en[coll] = {};
+    const tr = c.en[coll][id] || (c.en[coll][id] = {});
+    TRANSLATABLE[coll].forEach(k => {
+      if (data[k] !== undefined) tr[k] = data[k];
+    });
+    Store.saveContent();
   }
 
   /* ---------- פעולות סביבת ההדגמה ---------- */

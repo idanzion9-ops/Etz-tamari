@@ -69,6 +69,7 @@ const UI = (() => {
     document.body.classList.add('no-scroll');
     $('#sheet-body').scrollTop = 0;
     onCloseHook = onClose;
+    if (typeof Nav !== 'undefined') Nav.push('sheet');
     return $('#sheet-body');
   }
 
@@ -161,6 +162,9 @@ const UI = (() => {
 
   /* ---------- ניווט בין מסכים ---------- */
   function go(name) {
+    const cur = document.querySelector('.screen.on');
+    if (typeof Nav !== 'undefined' && cur && cur.id !== 'screen-' + name) Nav.push('screen');
+    if (typeof Nav !== 'undefined') Nav.disarm();
     $$('.screen').forEach(s => s.classList.toggle('on', s.id === 'screen-' + name));
     $$('.tab[data-go]').forEach(t => t.setAttribute('aria-selected', String(t.dataset.go === name)));
     window.scrollTo({ top: 0, behavior: 'smooth' });

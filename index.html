@@ -68,7 +68,7 @@
   </div>
 </header>
 <div class="rule" aria-hidden="true"></div>
-<div class="demo-ribbon" id="demo-ribbon" hidden>🧪 סביבת הדגמה — הנתונים מקומיים בלבד</div>
+<div class="demo-ribbon" id="demo-ribbon" hidden><span data-i18n="demo.ribbon">🧪 סביבת הדגמה — הנתונים מקומיים בלבד</span></div>
 
 <main class="wrap" id="main">
 
@@ -84,29 +84,15 @@
     </div>
 
     <section class="section">
-      <div class="eyebrow">קרוב בזמן</div>
+      <div class="eyebrow" data-i18n="home.upcoming">קרוב בזמן</div>
       <div id="home-upcoming"></div>
     </section>
 
-    <section class="section">
-      <div class="eyebrow">סדנאות</div>
-      <div id="home-workshops"></div>
-      <button class="btn btn-quiet btn-block" style="margin-top:14px" data-go="activities">כל הסדנאות והחוגים</button>
-    </section>
+
+
 
     <section class="section">
-      <div class="eyebrow">לעשות בבית</div>
-      <div id="home-projects"></div>
-      <button class="btn btn-quiet btn-block" style="margin-top:14px" data-go="projects">כל הפרויקטונים</button>
-    </section>
-
-    <section class="section">
-      <div class="eyebrow">המקום</div>
-      <div class="card" id="home-about"></div>
-    </section>
-
-    <section class="section">
-      <div class="eyebrow">שעות פתיחה</div>
+      <div class="eyebrow" data-i18n="home.hours">שעות פתיחה</div>
       <div class="card" id="home-hours"></div>
     </section>
   </section>
@@ -114,12 +100,12 @@
   <!-- ===================== פעילויות ===================== -->
   <section class="screen" id="screen-activities">
     <div class="section">
-      <div class="eyebrow">לוח פעילויות</div>
-      <h2 style="font-size:30px;margin-bottom:16px">סדנאות וחוגים</h2>
+      <div class="eyebrow" data-i18n="act.eyebrow">לוח פעילויות</div>
+      <h2 style="font-size:30px;margin-bottom:16px" data-i18n="act.title">סדנאות וחוגים</h2>
       <div class="seg" role="tablist">
-        <button role="tab" aria-selected="true" data-act="workshops">סדנאות</button>
-        <button role="tab" aria-selected="false" data-act="classes">חוגים</button>
-        <button role="tab" aria-selected="false" data-act="private">פרטי / קבוצה</button>
+        <button role="tab" aria-selected="true" data-act="workshops" data-i18n="act.workshops">סדנאות</button>
+        <button role="tab" aria-selected="false" data-act="classes" data-i18n="act.classes">חוגים</button>
+        <button role="tab" aria-selected="false" data-act="private" data-i18n="act.private">פרטי / קבוצה</button>
       </div>
       <div id="activities-list"></div>
     </div>
@@ -128,13 +114,13 @@
   <!-- ===================== פרויקטונים ===================== -->
   <section class="screen" id="screen-projects">
     <div class="section">
-      <div class="eyebrow">פרויקטונים</div>
-      <h2 style="font-size:30px;margin-bottom:8px">משאריות עץ</h2>
+      <div class="eyebrow" data-i18n="tile.proj">פרויקטונים</div>
+      <h2 style="font-size:30px;margin-bottom:8px" data-i18n="proj.title">משאריות עץ</h2>
       <p class="lead" id="projects-intro" style="margin:0 0 18px"></p>
       <div class="seg" role="tablist" id="projects-filter">
-        <button role="tab" aria-selected="true" data-lvl="all">הכול</button>
-        <button role="tab" aria-selected="false" data-lvl="קל">קל</button>
-        <button role="tab" aria-selected="false" data-lvl="בינוני">בינוני</button>
+        <button role="tab" aria-selected="true" data-lvl="all" data-i18n="proj.all">הכול</button>
+        <button role="tab" aria-selected="false" data-lvl="קל" data-i18n="proj.easy">קל</button>
+        <button role="tab" aria-selected="false" data-lvl="בינוני" data-i18n="proj.mid">בינוני</button>
       </div>
       <div class="pj-grid" id="projects-grid"></div>
     </div>
@@ -143,7 +129,7 @@
   <!-- ===================== הסדנה הפתוחה ===================== -->
   <section class="screen" id="screen-open">
     <div class="section">
-      <div class="eyebrow">הסדנה הפתוחה</div>
+      <div class="eyebrow" data-i18n="tile.open">הסדנה הפתוחה</div>
       <h2 style="font-size:30px;margin-bottom:10px" id="open-title"></h2>
       <p class="lead" id="open-text" style="margin:0 0 20px"></p>
       <div class="card" id="open-hours"></div>
@@ -158,8 +144,8 @@
   <!-- ===================== רגעים מהסדנה ===================== -->
   <section class="screen" id="screen-moments">
     <div class="section">
-      <div class="eyebrow">רגעים מהסדנה</div>
-      <h2 style="font-size:30px;margin-bottom:8px">מה קורה אצלנו</h2>
+      <div class="eyebrow" data-i18n="tile.moments">רגעים מהסדנה</div>
+      <h2 style="font-size:30px;margin-bottom:8px" data-i18n="mom.title">מה קורה אצלנו</h2>
       <p class="lead" id="moments-intro" style="margin:0 0 18px"></p>
       <div class="moments" id="moments-grid"></div>
     </div>
@@ -175,11 +161,11 @@
   <!-- ===================== חנות ===================== -->
   <section class="screen" id="screen-shop">
     <div class="section">
-      <div class="eyebrow">חנות</div>
-      <h2 style="font-size:30px;margin-bottom:6px">כלים וחומרים</h2>
-      <p class="muted" style="margin:0 0 18px">מה שאנחנו עובדים איתו בסדנה, זמין גם אליכם הביתה.</p>
+      <div class="eyebrow" data-i18n="nav.shop">חנות</div>
+      <h2 style="font-size:30px;margin-bottom:6px" data-i18n="shop.title">כלים וחומרים</h2>
+      <p class="muted" style="margin:0 0 18px" data-i18n="shop.sub">מה שאנחנו עובדים איתו בסדנה, זמין גם אליכם הביתה.</p>
       <div class="field" style="margin-bottom:16px">
-        <input type="search" id="shop-search" placeholder="חיפוש כלי או חומר…" aria-label="חיפוש בחנות">
+        <input type="search" id="shop-search" placeholder="חיפוש כלי או חומר…" data-i18n-ph="shop.search" aria-label="חיפוש בחנות">
       </div>
       <div class="shelf" id="shop-shelf"></div>
     </div>
@@ -190,22 +176,22 @@
     <div class="section">
       <div id="me-account"></div>
 
-      <div class="eyebrow" style="margin-top:30px">האזור שלי</div>
-      <h2 style="font-size:30px;margin-bottom:16px">ההרשמות שלי</h2>
+      <div class="eyebrow" style="margin-top:30px" data-i18n="me.eyebrow">האזור שלי</div>
+      <h2 style="font-size:30px;margin-bottom:16px" data-i18n="me.title">ההרשמות שלי</h2>
       <div id="me-requests"></div>
 
-      <div class="eyebrow" style="margin-top:32px">הפרטים שלי</div>
+      <div class="eyebrow" style="margin-top:32px" data-i18n="me.details">הפרטים שלי</div>
       <div class="card">
-        <p class="hint" style="margin-top:0">נשמר על המכשיר שלכם בלבד, כדי לא למלא אותו שוב בכל הרשמה.</p>
-        <div class="field"><label for="me-name">שם</label><input id="me-name" autocomplete="name"></div>
+        <p class="hint" style="margin-top:0" data-i18n="me.privacy">נשמר על המכשיר שלכם בלבד, כדי לא למלא אותו שוב בכל הרשמה.</p>
+        <div class="field"><label for="me-name" data-i18n="me.name">שם</label><input id="me-name" autocomplete="name"></div>
         <div class="grid2">
-          <div class="field"><label for="me-phone">טלפון</label><input id="me-phone" type="tel" autocomplete="tel"></div>
-          <div class="field"><label for="me-email">אימייל</label><input id="me-email" type="email" autocomplete="email"></div>
+          <div class="field"><label for="me-phone" data-i18n="me.phone">טלפון</label><input id="me-phone" type="tel" autocomplete="tel"></div>
+          <div class="field"><label for="me-email" data-i18n="me.email">אימייל</label><input id="me-email" type="email" autocomplete="email"></div>
         </div>
-        <button class="btn btn-quiet btn-block btn-sm" id="me-save">שמירת פרטים</button>
+        <button class="btn btn-quiet btn-block btn-sm" id="me-save" data-i18n="me.save">שמירת פרטים</button>
       </div>
 
-      <div class="eyebrow" style="margin-top:32px">יצירת קשר</div>
+      <div class="eyebrow" style="margin-top:32px" data-i18n="me.contact">יצירת קשר</div>
       <div class="card" id="me-contact"></div>
     </div>
   </section>
@@ -225,11 +211,11 @@
 
 <!-- ===================== ניווט תחתון ===================== -->
 <nav class="tabbar" role="tablist" aria-label="ניווט ראשי">
-  <button class="tab" role="tab" aria-selected="true"  data-go="home"><span class="ico">🏠</span>בית</button>
-  <button class="tab" role="tab" aria-selected="false" data-go="open"><span class="ico">🪚</span>הסדנה</button>
-  <button class="tab" role="tab" aria-selected="false" data-go="shop"><span class="ico">🛍️</span>חנות</button>
-  <button class="tab" id="tab-cart" aria-label="עגלת קניות"><span class="ico">🛒</span>עגלה<span class="badge" id="badge-cart-tab" hidden>0</span></button>
-  <button class="tab" id="tab-favs" aria-label="מועדפים"><span class="ico">♡</span>מועדפים<span class="badge" id="badge-favs-tab" hidden>0</span></button>
+  <button class="tab" role="tab" aria-selected="true"  data-go="home"><span class="ico">🏠</span><span data-i18n="nav.home">בית</span></button>
+  <button class="tab" role="tab" aria-selected="false" data-go="open"><span class="ico">🪚</span><span data-i18n="nav.open">הסדנה</span></button>
+  <button class="tab" role="tab" aria-selected="false" data-go="shop"><span class="ico">🛍️</span><span data-i18n="nav.shop">חנות</span></button>
+  <button class="tab" id="tab-cart" aria-label="עגלת קניות"><span class="ico">🛒</span><span data-i18n="nav.cart">עגלה</span><span class="badge" id="badge-cart-tab" hidden>0</span></button>
+  <button class="tab" id="tab-favs" aria-label="מועדפים"><span class="ico">♡</span><span data-i18n="nav.favs">מועדפים</span><span class="badge" id="badge-favs-tab" hidden>0</span></button>
 </nav>
 
 <!-- ===================== מגירה כללית ===================== -->
@@ -255,6 +241,8 @@
 
 <script src="assets/js/store.js"></script>
 <script src="assets/js/ui.js"></script>
+<script src="assets/js/i18n.js"></script>
+<script src="assets/js/nav.js"></script>
 <script src="assets/js/illus.js"></script>
 <script src="assets/js/demo.js"></script>
 <script src="assets/js/app.js"></script>
