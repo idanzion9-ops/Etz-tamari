@@ -1241,3 +1241,12 @@ html[data-a11y-contrast="1"] .step-il { background: #fff; border-color: #000; }
 
 html[data-a11y-contrast="1"] .lang-pill { background: #fff; border-color: #000; }
 html[data-a11y-contrast="1"] .lang-btn[aria-pressed="true"] { outline: 2px solid #000; }
+
+/* מרכז הניהול כתוב עברית — הוא נשאר RTL גם כשהאפליקציה באנגלית */
+.sheet.admin { direction: rtl; text-align: right; }
+.sheet.admin input, .sheet.admin textarea, .sheet.admin select {
+  /* השדות הולכים לפי שפת התוכן שבתוכם, לא לפי שפת הממשק.
+     plaintext מזהה את הכיוון מהתו החזק הראשון — כמו dir="auto". */
+  unicode-bidi: plaintext;
+  text-align: start;
+}

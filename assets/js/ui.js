@@ -64,6 +64,10 @@ const UI = (() => {
     f.innerHTML = foot;
     f.hidden = !foot;
     s.classList.toggle('admin', !!admin);
+    // ממשק הניהול כתוב בעברית בלבד. כשהאפליקציה באנגלית הדף הוא LTR,
+    // וטקסט עברי בפריסה כזו נראה שבור — אז המגירה נשארת RTL.
+    if (admin) s.setAttribute('dir', 'rtl');
+    else s.removeAttribute('dir');
     s.classList.add('on');
     $('#scrim').classList.add('on');
     document.body.classList.add('no-scroll');
