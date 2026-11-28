@@ -503,8 +503,8 @@ const Admin = (() => {
     },
 
     memorial() {
-      const m = Store.content.memorial || {};
-      return `<p class="hint" style="margin-top:0">הטקסט מוצג בדיוק כפי שנכתב כאן. שורה ריקה בין פסקאות מפרידה ביניהן.</p>
+      const m = memView() || {};
+      return enBanner() + `<p class="hint" style="margin-top:0">הטקסט מוצג בדיוק כפי שנכתב כאן. שורה ריקה בין פסקאות מפרידה ביניהן.</p>
         ${form([
           { k: 'mem_title', t: 'כותרת' },
           { k: 'mem_lead', type: 'area', t: 'פסקת הפתיחה' },
@@ -548,8 +548,8 @@ const Admin = (() => {
     },
 
     openws() {
-      const o = Store.site().openWorkshop || {};
-      return `<div class="eyebrow">טקסט המסך</div>
+      const o = owView() || {};
+      return enBanner() + `<div class="eyebrow">טקסט המסך</div>
         ${form([
           { k: 'ow_title', t: 'כותרת' },
           { k: 'ow_text', type: 'area', t: 'תיאור' }
@@ -622,8 +622,8 @@ const Admin = (() => {
     },
 
     content() {
-      const s = Store.site();
-      return `<div class="eyebrow">מיתוג</div>
+      const s = siteView();
+      return enBanner() + `<div class="eyebrow">מיתוג</div>
         ${form([
           { k: 'name', t: 'שם המקום' },
           { k: 'tagline', t: 'שורת משנה' },
@@ -861,6 +861,32 @@ const Admin = (() => {
 
   const bilingual = coll => !!TRANSLATABLE[coll];
 
+  // המסכים הכלליים. מה שאינו כאן משותף לשתי השפות ונערך בעברית בלבד:
+  // מחירים, תמונות, פרטי קשר, שעות ההרשמה והקוד.
+  const SITE_TR = ['name', 'tagline', 'heroTitle', 'heroText',
+                   'aboutTitle', 'aboutHtml', 'projectsIntro', 'momentsIntro'];
+  const MEM_TR  = ['title', 'lead', 'paragraphs', 'familyIntro', 'familyNames', 'familyOutro'];
+
+  /** ענף התרגום, נוצר בפעם הראשונה שצריך אותו */
+  function enBranch(key) {
+    const c = Store.content;
+    if (!c.en) c.en = {};
+    if (!c.en[key]) c.en[key] = {};
+    return c.en[key];
+  }
+
+  /** הערכים שמוצגים בטופס הכללי: אנגלית כשזו השפה, אחרת המקור */
+  const siteView = () => I18n.isEn()
+    ? { ...Store.site(), ...(Store.content.en && Store.content.en.site || {}) }
+    : Store.site();
+  const memView  = () => I18n.memorial();
+  const owView   = () => I18n.openWorkshop();
+
+  /** פס חיווי שמופיע בראש כל מסך עריכה כשהשפה אנגלית */
+  const enBanner = () => I18n.isEn()
+    ? `<div class="alert ok" style="margin-bottom:14px"><span>🌐</span><span>עריכה באנגלית. מחירים, תמונות ופרטי קשר משותפים לשתי השפות ונערכים בעברית.</span></div>`
+    : '';
+
   /** הערכים שיוצגו בטופס: התרגום כשקיים, אחרת המקור */
   function forEdit(coll, rec) {
     if (!rec || !I18n.isEn() || !bilingual(coll)) return rec;
@@ -964,8 +990,19 @@ const Admin = (() => {
   }
 
   function saveSite() {
-    const site = Store.site();
     const d = collect($('#sheet-body'));
+
+    if (I18n.isEn()) {
+      const en = enBranch('site');
+      SITE_TR.forEach(k => { if (d[k] !== undefined) en[k] = d[k]; });
+      en.hours = (Store.site().hours || []).map((h, i) => ({ d: h.d, t: h.t }));
+      $$('[data-hour]').forEach(el => { en.hours[el.dataset.i][el.dataset.hour] = el.value; });
+      try { Store.saveContent(); } catch (err) { return toast(err.message); }
+      refreshPublic();
+      return toast('התרגום לאנגלית נשמר.');
+    }
+
+    const site = Store.site();
     Object.assign(site, {
       name: d.name, tagline: d.tagline, heroEmoji: d.heroEmoji,
       heroTitle: d.heroTitle, heroText: d.heroText,
@@ -989,6 +1026,20 @@ const Admin = (() => {
   function saveMemorial() {
     const d = collect($('#sheet-body'));
     const lines = v => String(v || '').split('\n').map(x => x.trim()).filter(Boolean);
+
+    if (I18n.isEn()) {
+      const en = enBranch('memorial');
+      en.title        = d.mem_title;
+      en.lead         = d.mem_lead;
+      en.paragraphs   = lines(d.mem_body);
+      en.familyIntro  = d.mem_fin;
+      en.familyNames  = String(d.mem_names || '').split(',').map(x => x.trim()).filter(Boolean);
+      en.familyOutro  = d.mem_fout;
+      try { Store.saveContent(); } catch (err) { return toast(err.message); }
+      refreshPublic();
+      return toast('התרגום לאנגלית נשמר.');
+    }
+
     Store.content.memorial = {
       title: d.mem_title,
       photo: d.mem_photo,
@@ -1006,8 +1057,31 @@ const Admin = (() => {
 
   function saveOpenWorkshop() {
     const site = Store.site();
-    const o = site.openWorkshop || (site.openWorkshop = { hours: [], plans: [] });
+    const base = site.openWorkshop || (site.openWorkshop = { hours: [], plans: [] });
     const d = collect($('#sheet-body'));
+
+    if (I18n.isEn()) {
+      const en = enBranch('openWorkshop');
+      en.title = d.ow_title;
+      en.text  = d.ow_text;
+      en.hours = (base.hours || []).map(h => ({ d: h.d, t: h.t }));
+      $$('[data-owh]').forEach(el => { en.hours[el.dataset.i][el.dataset.owh] = el.value; });
+      en.plans = (base.plans || []).map((p, i) => {
+        const cur = (en.plans && en.plans[i]) || {};
+        return { name: cur.name ?? p.name, desc: cur.desc ?? p.desc };
+      });
+      $$('[data-owp]').forEach(el => {
+        const k = el.dataset.owp;
+        if (k === 'name' || k === 'desc') en.plans[el.dataset.i][k] = el.value;
+        else if (k === 'price') base.plans[el.dataset.i].price = Number(el.value);
+        else if (k === 'best')  base.plans[el.dataset.i].best  = el.checked;
+      });
+      try { Store.saveContent(); } catch (err) { return toast(err.message); }
+      refreshPublic();
+      return toast('התרגום לאנגלית נשמר.');
+    }
+
+    const o = base;
     o.title = d.ow_title;
     o.text  = d.ow_text;
     $$('[data-owh]').forEach(el => { o.hours[el.dataset.i][el.dataset.owh] = el.value; });
