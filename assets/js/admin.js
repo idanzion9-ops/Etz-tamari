@@ -127,6 +127,15 @@ const Admin = (() => {
     $('#sheet-body').appendChild(box);
   }
 
+  /** עיבוד תמונה שעדיין רץ. השמירה ממתינה לו במקום להיחסם. */
+  let pending = null;
+
+  async function settle() {
+    if (!pending) return;
+    toast('ממתין לסיום עיבוד התמונה…');
+    try { await pending; } catch (e) {}
+  }
+
   function collect(scope = document) {
     // מקלדות מובייל מחזיקות את הערך עד לאיבוד המיקוד. מסיימים קודם.
     try { document.activeElement && document.activeElement.blur(); } catch (e) {}
@@ -331,6 +340,7 @@ const Admin = (() => {
             ${counts[s.k] ? `<span class="dot">${counts[s.k]}</span>` : ''}
             <span class="ico">${s.i}</span><span>${esc(s.t)}</span></button>`).join('')}
         </div>
+        ${storageBar()}
         ${Store.content.updatedAt ? `<p class="hint" style="text-align:center;margin-top:16px">שינוי אחרון נשמר: ${new Date(Store.content.updatedAt).toLocaleString('he-IL')}</p>` : ''}
         <p class="hint" style="text-align:center">שינויים נשמרים על המכשיר הזה. כדי שיופיעו לכולם — ״פרסום וגיבוי״.</p>`;
     },
@@ -520,7 +530,8 @@ const Admin = (() => {
     },
 
     moments() {
-      return `<p class="hint" style="margin-top:0">התמונות מוקטנות אוטומטית. שמרו על עשר־חמש־עשרה תמונות טובות במקום הרבה בינוניות.</p>`
+      return storageBar()
+        + `<p class="hint">התמונות מוקטנות אוטומטית ל-900 פיקסל. עשר־חמש־עשרה תמונות טובות עדיפות על הרבה בינוניות.</p>`
         + listBlock('moments', Store.list('moments').map(x =>
             `<div class="adm-list-item">
               <div class="head">
@@ -726,6 +737,7 @@ const Admin = (() => {
 
       const save = t.closest('[data-save]');
       if (save) {
+        if (pending) await settle();
         const coll = save.dataset.save;
         let data = collect($('#sheet-body'));
         if (!data.id) delete data.id;
@@ -733,6 +745,10 @@ const Admin = (() => {
         ['price', 'capacity', 'sessions', 'qty', 'amount', 'stock', 'taken', 'people', 'total'].forEach(k => {
           if (data[k] !== undefined && data[k] !== '') data[k] = Number(data[k]);
         });
+        if (data.image && !Store.hasRoom(data.image.length)) {
+          const u = Store.usage();
+          return toast(`אין מקום לתמונה נוספת (${u.kb}KB מתוך ${u.limitKb}KB). מחקו תמונות קיימות.`);
+        }
         try {
           if (I18n.isEn() && bilingual(coll)) saveTranslation(coll, data);
           else Store.upsert(coll, data);
@@ -741,9 +757,9 @@ const Admin = (() => {
         return render();
       }
 
-      if (t.closest('[data-save-site]')) return saveSite();
-      if (t.closest('[data-save-ow]')) return saveOpenWorkshop();
-      if (t.closest('[data-save-mem]')) return saveMemorial();
+      if (t.closest('[data-save-site]')) { if (pending) await settle(); return saveSite(); }
+      if (t.closest('[data-save-ow]')) { if (pending) await settle(); return saveOpenWorkshop(); }
+      if (t.closest('[data-save-mem]')) { if (pending) await settle(); return saveMemorial(); }
 
       const pull = t.closest('[data-pull]');
       if (pull) {
@@ -778,7 +794,9 @@ const Admin = (() => {
      }
     });
 
-    // תמונות — עם חיווי, נעילת השמירה בזמן העיבוד, וכישלון קולני
+    // תמונות.
+    // הכפתור לא ננעל בזמן העיבוד: כפתור מנוטרל שלא מגיב נראה למשתמש
+    // כמו תקלה. במקום זה השמירה ממתינה לעיבוד אם הוא עוד רץ.
     document.addEventListener('change', async e => {
       if (e.target.id === 'demo-on') {
         Demo.setOn(e.target.checked);
@@ -790,29 +808,29 @@ const Admin = (() => {
       if (img) {
         const key = img.dataset.img;
         const prev = $(`#prev_${key}`);
-        const saveBtns = $$('#sheet-foot [data-save], #sheet-body [data-save-mem], #sheet-body [data-save-site]');
         const file = e.target.files && e.target.files[0];
+        e.target.value = '';           // מאפשר לבחור שוב את אותו קובץ
         if (!file) return;
 
         if (prev) prev.innerHTML = '<span class="hint">מעבד את התמונה…</span>';
-        saveBtns.forEach(b => { b.disabled = true; });
 
-        try {
-          const url = await readImage(file);
-          const hidden = $(`input[type=hidden][data-f="${key}"]`);
-          if (!hidden) throw new Error('שדה התמונה לא נמצא — סגרו ופתחו מחדש');
-          hidden.value = url;
-          const kb = Math.round(url.length * 0.75 / 1024);
-          if (prev) prev.innerHTML =
-            `<img src="${url}" alt="" style="height:88px;border-radius:var(--r-sm);border:1px solid var(--line)">
-             <div class="hint">מוכן · ${kb}KB</div>`;
-        } catch (err) {
-          if (prev) prev.innerHTML = `<div class="hint" style="color:var(--stop)">${esc(err.message)}</div>`;
-          toast(err.message);
-        } finally {
-          saveBtns.forEach(b => { b.disabled = false; });
-          e.target.value = '';   // מאפשר לבחור שוב את אותו קובץ
-        }
+        pending = (async () => {
+          try {
+            const url = await readImage(file);
+            const hidden = $(`input[type=hidden][data-f="${key}"]`);
+            if (!hidden) throw new Error('הטופס נסגר באמצע העיבוד');
+            hidden.value = url;
+            const kb = Math.round(url.length * 0.75 / 1024);
+            if (prev) prev.innerHTML =
+              `<img src="${url}" alt="" style="height:88px;border-radius:var(--r-sm);border:1px solid var(--line)">
+               <div class="hint">מוכן · ${kb}KB</div>`;
+          } catch (err) {
+            if (prev) prev.innerHTML = `<div class="hint" style="color:var(--stop)">${esc(err.message)}</div>`;
+            toast(err.message);
+          } finally {
+            pending = null;
+          }
+        })();
         return;
       }
 
@@ -864,6 +882,23 @@ const Admin = (() => {
   }
 
   /* ---------- פעולות סביבת ההדגמה ---------- */
+
+  /** מד האחסון — מופיע בלוח המחוונים ובמסך הרגעים */
+  function storageBar() {
+    const u = Store.usage();
+    const level = u.pct >= 85 ? 'stop' : u.pct >= 60 ? 'warn' : 'ok';
+    const note = u.pct >= 85
+      ? 'האחסון כמעט מלא. מחקו תמונות או פרסמו ואפסו את הטיוטה.'
+      : u.pct >= 60 ? 'שימו לב לנפח. כל תמונה תופסת מקום.' : '';
+    return `<div class="card" style="padding:14px">
+      <div class="line" style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:7px">
+        <span class="lbl" style="margin:0">אחסון במכשיר</span>
+        <b class="num" style="font-size:13px">${u.kb}KB מתוך ${u.limitKb}KB · ${u.images} תמונות</b>
+      </div>
+      <div class="bar"><i class="${u.pct >= 85 ? 'full' : ''}" style="width:${Math.max(2, u.pct)}%"></i></div>
+      ${note ? `<div class="alert ${level}" style="margin:10px 0 0;font-size:13px;padding:9px 11px">${esc(note)}</div>` : ''}
+    </div>`;
+  }
 
   function demoAction(what, id) {
     try {

@@ -91,8 +91,8 @@ const UI = (() => {
      מהיר, לא לתפוס את הדפדפן, ולהיכשל בקול רם במקום להיתקע בשקט.
      ------------------------------------------------------------------ */
 
-  const MAX_SIDE = 1100;
-  const QUALITY  = 0.78;
+  const MAX_SIDE = 900;
+  const QUALITY  = 0.72;
 
   function canvasFrom(bitmapOrImg, w, h) {
     const scale = Math.min(1, MAX_SIDE / Math.max(w, h));

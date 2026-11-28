@@ -278,6 +278,26 @@ const Store = (() => {
     location.reload();
   }
 
+  /* ---------- מדידת האחסון ----------
+     הדפדפנים מגבילים את localStorage לכ-5MB. התמונות הן מה שממלא אותו,
+     ועדיף להראות את זה מראש מאשר להיכשל בשמירה.
+     ------------------------------------------------------------------ */
+
+  const LIMIT = 5 * 1024 * 1024;
+
+  function usage() {
+    const chars = JSON.stringify(content).length;
+    const bytes = chars * 2;            // הדפדפן סופר UTF-16
+    const images = (content.moments || []).filter(m => m.image).length
+                 + (content.products || []).filter(p => p.image).length
+                 + (content.workshops || []).filter(w => w.image).length
+                 + (content.classes || []).filter(c => c.image).length;
+    return { bytes, kb: Math.round(bytes / 1024), pct: Math.min(100, Math.round(bytes / LIMIT * 100)), images, limitKb: Math.round(LIMIT / 1024) };
+  }
+
+  /** האם יש מקום לתוספת בגודל נתון */
+  const hasRoom = extraChars => (JSON.stringify(content).length + extraChars) * 2 < LIMIT * 0.92;
+
   /* ---------- מצב ניהול ---------- */
   const adminOpen = () => sessionStorage.getItem(SESSION_KEY) === '1';
   const setAdminOpen = v => v ? sessionStorage.setItem(SESSION_KEY, '1') : sessionStorage.removeItem(SESSION_KEY);
@@ -292,6 +312,6 @@ const Store = (() => {
     favToggle, isFav, addRequest, addOrder,
     progressOf, toggleStep, resetProgress,
     publishFile, backupFile, restore, resetDraft,
-    adminOpen, setAdminOpen
+    adminOpen, setAdminOpen, usage, hasRoom
   };
 })();

@@ -466,6 +466,9 @@ input[type="file"] { padding: 9px; background: var(--paper); }
   box-shadow: var(--shadow-lift);
   transform: translateY(140%); opacity: 0;
   transition: transform .32s cubic-bezier(.22,1,.36,1), opacity .32s;
+  /* הודעה היא פסיבית. בלי זה היא יושבת מעל כפתורים ובולעת לחיצות
+     גם כשהיא שקופה ומוזזת מהמסך — וכפתור השמירה פשוט לא מגיב. */
+  pointer-events: none;
 }
 .toast.on { transform: none; opacity: 1; }
 
