@@ -690,6 +690,12 @@ const App = (() => {
     document.addEventListener('click', e => {
       const t = e.target;
 
+      const lb = t.closest('#lang-pill [data-lang]');
+      if (lb) {
+        if (lb.dataset.lang !== I18n.get()) I18n.set(lb.dataset.lang);
+        return;
+      }
+
       const tile = t.closest('[data-tile]');
       if (tile) {
         const k = tile.dataset.tile;
@@ -792,6 +798,8 @@ const App = (() => {
   /** מחליף את הטקסט בכל אלמנט מתויג ב-HTML הקבוע */
   function paintStatic() {
     $$('[data-i18n]').forEach(el => { el.textContent = I18n.t(el.dataset.i18n); });
+    $$('#lang-pill [data-lang]').forEach(b =>
+      b.setAttribute('aria-pressed', String(b.dataset.lang === I18n.get())));
     $$('[data-i18n-ph]').forEach(el => { el.placeholder = I18n.t(el.dataset.i18nPh); });
     const d = document.querySelector('meta[name="description"]');
     if (d) d.content = I18n.site('heroText') || d.content;

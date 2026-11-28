@@ -1194,3 +1194,47 @@ html[data-a11y-contrast="1"] .step-il { background: #fff; border-color: #000; }
 
 /* שורת המשנה בכותרת לא נשברת לשתי שורות באנגלית */
 .wordmark .sub { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 40vw; }
+
+/* ==========================================================================
+   בורר השפה בסרגל העליון
+   שני דגלים, הפעיל מודגש. בולט מספיק כדי שימצאו אותו בלי לחפש.
+   ========================================================================== */
+
+.lang-pill {
+  display: flex; gap: 2px;
+  padding: 3px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.3);
+  border: 1px solid rgba(255,255,255,.45);
+  flex-shrink: 0;
+}
+.lang-btn {
+  width: 32px; height: 32px; padding: 0;
+  border: 0; border-radius: 50%;
+  background: transparent;
+  display: grid; place-items: center;
+  transition: background-color .18s, transform .18s;
+  opacity: .5;
+}
+.lang-btn svg {
+  width: 24px; height: 24px; border-radius: 50%;
+  box-shadow: 0 0 0 1px rgba(33,36,31,.18);
+  display: block;
+}
+.lang-btn:hover { opacity: .85; }
+.lang-btn[aria-pressed="true"] {
+  background: #fff;
+  opacity: 1;
+  box-shadow: 0 1px 4px rgba(33,36,31,.2);
+}
+.lang-btn[aria-pressed="true"] svg { box-shadow: 0 0 0 1px rgba(33,36,31,.28); }
+
+/* במסך צר — שורת המשנה מפנה מקום */
+@media (max-width: 400px) {
+  .wordmark .sub { display: none; }
+  .lang-btn { width: 29px; height: 29px; }
+  .lang-btn svg { width: 22px; height: 22px; }
+}
+
+html[data-a11y-contrast="1"] .lang-pill { background: #fff; border-color: #000; }
+html[data-a11y-contrast="1"] .lang-btn[aria-pressed="true"] { outline: 2px solid #000; }

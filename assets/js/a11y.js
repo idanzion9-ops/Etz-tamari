@@ -44,8 +44,7 @@ const A11y = (() => {
     });
     const lbl = document.getElementById('a11y-size-label');
     if (lbl) lbl.textContent = `${100 + state.font * 15}%`;
-    document.querySelectorAll('[data-lang]').forEach(b =>
-      b.setAttribute('aria-pressed', String(b.dataset.lang === I18n.get())));
+
   }
 
   /* ---------- הלוח ---------- */
@@ -54,13 +53,7 @@ const A11y = (() => {
       <h3>${I18n.t('a11y.title')}</h3>
       <p class="hint" style="margin:0">${I18n.t('a11y.saved')}</p>
 
-      <div class="lbl" style="margin-top:14px">${I18n.t('a11y.lang')}</div>
-      <div class="a11y-row" style="margin-top:6px">
-        <button class="a11y-btn" data-lang="he" aria-pressed="false">עברית</button>
-        <button class="a11y-btn" data-lang="en" aria-pressed="false">English</button>
-      </div>
-
-      <div class="lbl">${I18n.t('a11y.size')} — <span id="a11y-size-label">100%</span></div>
+      <div class="lbl" style="margin-top:14px">${I18n.t('a11y.size')} — <span id="a11y-size-label">100%</span></div>
       <div class="a11y-row" style="margin-top:6px">
         <button class="a11y-btn" data-a11y="bigger">${I18n.t('a11y.bigger')}</button>
         <button class="a11y-btn" data-a11y="smaller">${I18n.t('a11y.smaller')}</button>
@@ -162,13 +155,6 @@ const A11y = (() => {
     });
 
     panel.addEventListener('click', e => {
-      const lb = e.target.closest('[data-lang]');
-      if (lb) {
-        I18n.set(lb.dataset.lang);
-        panel.innerHTML = panelHtml();
-        syncButtons();
-        return;
-      }
       const b = e.target.closest('[data-a11y]');
       if (!b) return;
       const k = b.dataset.a11y;
